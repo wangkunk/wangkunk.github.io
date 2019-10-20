@@ -17,7 +17,7 @@
       <pubDate>Sun, 20 Oct 2019 13:13:40 +0800</pubDate>
       
       <guid>https://wangkunk.github.io/post/mysql%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E7%AE%80%E4%BB%8B/</guid>
-      <description>本篇文章主要简介下MySQL中where,group by ,order by ,limit,join,union ,union all,子表等查询语法。 测试数据准备 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21</description>
+      <description>&lt;p&gt;本篇文章主要简介下MySQL中where,group by ,order by ,limit,join,union ,union all,子表等查询语法。&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -26,7 +26,10 @@
       <pubDate>Sun, 20 Oct 2019 13:07:50 +0800</pubDate>
       
       <guid>https://wangkunk.github.io/post/linux%E5%AE%89%E8%A3%85mysql%E6%A0%87%E5%87%86%E6%95%99%E7%A8%8B/</guid>
-      <description>导读： 本文主要介绍 CentOS 系统二进制安装 MySQL 5.7.23 版本的安装步骤，其他版本安装过程相似。 1.前置准备 卸载旧版MySQL 查看rpm包 rpm -qa|grep mysql 若有可用rpm -</description>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;导读：
+本文主要介绍 CentOS 系统二进制安装 MySQL 5.7.23 版本的安装步骤，其他版本安装过程相似。&lt;/p&gt;
+&lt;/blockquote&gt;</description>
     </item>
     
     <item>
