@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>必看的数据库规范 - Even - A super concise theme for Hugo</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="前言： 关于MySQL数据库规范，相信大家多少看过一些文档。本篇文章给大家详细分类总结了数据库相关规范，从库表命名设计规范讲起，到索引设计规范" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/%E5%BF%85%E7%9C%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A7%84%E8%8C%83/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="必看的数据库规范" />
+<meta property="og:description" content="前言： 关于MySQL数据库规范，相信大家多少看过一些文档。本篇文章给大家详细分类总结了数据库相关规范，从库表命名设计规范讲起，到索引设计规范" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/%E5%BF%85%E7%9C%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A7%84%E8%8C%83/" />
+<meta property="article:published_time" content="2019-10-19T19:20:21+08:00" />
+<meta property="article:modified_time" content="2019-10-19T19:20:21+08:00" />
+<meta itemprop="name" content="必看的数据库规范">
+<meta itemprop="description" content="前言： 关于MySQL数据库规范，相信大家多少看过一些文档。本篇文章给大家详细分类总结了数据库相关规范，从库表命名设计规范讲起，到索引设计规范">
+
+
+<meta itemprop="datePublished" content="2019-10-19T19:20:21&#43;08:00" />
+<meta itemprop="dateModified" content="2019-10-19T19:20:21&#43;08:00" />
+<meta itemprop="wordCount" content="2789">
+
+
+
+<meta itemprop="keywords" content="MySQL," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="必看的数据库规范"/>
+<meta name="twitter:description" content="前言： 关于MySQL数据库规范，相信大家多少看过一些文档。本篇文章给大家详细分类总结了数据库相关规范，从库表命名设计规范讲起，到索引设计规范"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">必看的数据库规范</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-10-19 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 2789 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#关于库">关于库：</a></li>
+<li><a href="#关于表">关于表</a></li>
+<li><a href="#关于索引">关于索引</a></li>
+<li><a href="#sql编写">SQL编写</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
+
+<p><strong>前言：</strong><br />
+关于MySQL数据库规范，相信大家多少看过一些文档。本篇文章给大家详细分类总结了数据库相关规范，从库表命名设计规范讲起，到索引设计规范，后面又给出SQL编写方面的建议。相信这些规范适用于大多数公司，也希望大家都能按照规范来使用我们的数据库，这样我们的数据库才能发挥出更高的性能</p>
+
+<h4 id="关于库">关于库：</h4>
+
+<ol>
+<li>【强制】库的名称必须控制在32个字符以内，英文一律小写。</li>
+<li>【强制】库的名称格式：业务系统名称_子系统名。</li>
+<li>【强制】库名只能使用英文字母，数字，下划线，并以英文字母开头。</li>
+<li>【强制】创建数据库时必须显式指定字符集，并且字符集只能是utf8或者utf8mb4。创建数据库SQL举例：Create database db1 default character set utf8;</li>
+<li>【建议】临时库、表名以<code>tmp_</code> 为前缀，并以日期为后缀，备份库、表以 <code>bak_</code> 为前缀，并以日期为后缀。</li>
+</ol>
+
+<h4 id="关于表">关于表</h4>
+
+<ol>
+<li><p>【强制】表和列的名称必须控制在32个字符以内，表名只能使用字母、数字和下划线，一律小写。</p></li>
+
+<li><p>【强制】表名要求模块名强相关，同一模块使用的表名尽量使用统一前缀。</p></li>
+
+<li><p>【强制】创建表时必须显式指定字符集为utf8或utf8mb4。</p></li>
+
+<li><p>【强制】列名尽量不用关键字（如type,order等）。</p></li>
+
+<li><p>【强制】创建表时必须显式指定表存储引擎类型，如无特殊需求，一律为InnoDB。</p></li>
+
+<li><p>【强制】建表必须有comment。</p></li>
+
+<li><p>【强制】对于超过100W行的大表进行alter table，必须经过DBA审核，并在业务低峰期执行，多个alter需整合在一起。
+因为alter table会产生表锁，期间阻塞对于该表的所有写入，对于业务可能会产生极大影响。</p></li>
+
+<li><p>【建议】建表时关于主键：表必须有主键
+(1)强制要求主键为id，类型为int或bigint，且为auto_increment 建议使用unsigned无符号型。</p></li>
+</ol>
+
+<p>(2)标识表里每一行主体的字段不要设为主键，建议设为其他字段如user_id，order_id等，并建立unique key索引。
+   因为如果设为主键且主键值为随机插入，则会导致innodb内部page分裂和大量随机I/O，性能下降。</p>
+
+<ol>
+<li><p>【建议】核心表（如用户表）必须有行数据的创建时间字段create_time和最后更新时间字段update_time，便于查问题。</p></li>
+
+<li><p>【建议】表中所有字段尽量都是NOT NULL属性，业务可以根据需要定义DEFAULT值。
+因为使用NULL值会存在每一行都会占用额外存储空间、数据迁移容易出错、聚合函数计算结果偏差等问题。</p></li>
+
+<li><p>【建议】中间表用于保留中间结果集，名称必须以<code>tmp_</code> 开头。备份表用于备份或抓取源表快照，名称必须以<code>bak_</code>开头。中间表和备份表定期清理。</p></li>
+
+<li><p>【示范】一个较为规范的建表语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="nf">user_info</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="kt">int</span> <span class="k">unsigned</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="kp">AUTO_INCREMENT</span> <span class="n">COMMENT</span> <span class="s1">&#39;自增主键&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">user_id</span><span class="o">`</span> <span class="kt">bigint</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;用户id&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">username</span><span class="o">`</span> <span class="kt">varchar</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;真实姓名&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">email</span><span class="o">`</span> <span class="kt">varchar</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;用户邮箱&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">nickname</span><span class="o">`</span> <span class="kt">varchar</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;昵称&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">birthday</span><span class="o">`</span> <span class="kt">date</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;生日&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">sex</span><span class="o">`</span> <span class="kt">tinyint</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="s1">&#39;0&#39;</span> <span class="n">COMMENT</span> <span class="s1">&#39;性别&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">short_introduce</span><span class="o">`</span> <span class="kt">varchar</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;一句话介绍自己，最多50个汉字&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">user_resume</span><span class="o">`</span> <span class="kt">varchar</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;用户提交的简历存放地址&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">user_register_ip</span><span class="o">`</span> <span class="kt">int</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;用户注册时的源ip&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">create_time</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="n">COMMENT</span> <span class="s1">&#39;创建时间&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">update_time</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="n">COMMENT</span> <span class="s1">&#39;修改时间&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">user_review_status</span><span class="o">`</span> <span class="kt">tinyint</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="n">COMMENT</span> <span class="s1">&#39;用户资料审核状态，1为通过，2为审核中，3为未通过，4为还未提交审核&#39;</span><span class="p">,</span>
+  <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span>
+  <span class="k">UNIQUE</span> <span class="k">KEY</span> <span class="o">`</span><span class="n">uniq_user_id</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">user_id</span><span class="o">`</span><span class="p">),</span>
+  <span class="k">KEY</span> <span class="o">`</span><span class="n">idx_username</span><span class="o">`</span><span class="p">(</span><span class="o">`</span><span class="n">username</span><span class="o">`</span><span class="p">),</span>
+  <span class="k">KEY</span> <span class="o">`</span><span class="n">idx_create_time_status</span><span class="o">`</span><span class="p">(</span><span class="o">`</span><span class="n">create_time</span><span class="o">`</span><span class="p">,</span><span class="o">`</span><span class="n">user_review_status</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8</span> <span class="n">COMMENT</span><span class="o">=</span><span class="s1">&#39;网站用户基本信息&#39;</span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+
+<h4 id="关于索引">关于索引</h4>
+
+<ol>
+<li>【强制】InnoDB表必须主键为id int/bigint auto_increment,且主键值禁止被更新。</li>
+<li>【强制】InnoDB和MyISAM存储引擎表，索引类型必须为BTREE。</li>
+<li>【建议】主键的名称以 <code>pk_</code> 开头，唯一键以 <code>uniq_</code> 或  <code>uk_</code>  开头，普通索引以 <code>idx_</code> 开头，一律使用小写格式，以字段的名称或缩写作为后缀。</li>
+<li>【建议】单个表上的索引个数不能超过8个。</li>
+<li>【建议】在建立索引时，多考虑建立联合索引，并把区分度最高的字段放在最前面。如列userid的区分度可由select count(distinct userid)计算出来。</li>
+<li>【建议】在多表join的SQL里，保证被驱动表的连接列上有索引，这样join执行效率最高。</li>
+<li>【建议】建表或加索引时，保证表里互相不存在冗余索引。
+对于MySQL来说，如果表里已经存在key(a,b)，则key(a)为冗余索引，需要删除。</li>
+</ol>
+
+<h4 id="sql编写">SQL编写</h4>
+
+<ol>
+<li>【强制】程序端SELECT语句必须指定具体字段名称，禁止写成 *。</li>
+<li>【强制】程序端insert语句指定具体字段名称，不要写成insert into t1 values(…)。</li>
+<li>【强制】除静态表或小表（100行以内），DML语句必须有where条件，且使用索引查找。</li>
+<li>【强制】where条件里等号左右字段类型必须一致，否则无法利用索引。</li>
+<li>【强制】WHERE 子句中禁止只使用全模糊的LIKE条件进行查找，必须有其他等值或范围查询条件，否则无法利用索引。</li>
+<li>【强制】索引列不要使用函数或表达式，否则无法利用索引。如where length(name)=&lsquo;Admin&rsquo;或where user_id+2=10023。</li>
+<li>【建议】insert into…values(XX),(XX),(XX).. 这里XX的值不要超过5000个。
+值过多虽然上线很很快，但会引起主从同步延迟。</li>
+<li>【建议】SELECT语句不要使用UNION，推荐使用UNION ALL，并且UNION子句个数限制在5个以内。
+因为union all不需要去重，节省数据库资源，提高性能。</li>
+<li>【强制】禁止跨db的join语句。</li>
+<li>【建议】不建议使用子查询，建议将子查询SQL拆开结合程序多次查询，或使用join来代替子查询。</li>
+<li>【建议】线上环境，多表join不要超过5个表。</li>
+<li>【建议】在多表join中，尽量选取结果集较小的表作为驱动表，来join其他表。</li>
+<li>【建议】批量操作数据时，需要控制事务处理间隔时间，进行必要的sleep。</li>
+<li>建议】事务里包含SQL不超过5个
+因为过长的事务会导致锁数据较久，MySQL内部缓存、连接消耗过多等问题。</li>
+<li>【建议】事务里更新语句尽量基于主键或unique key，如update … where id=XX;
+否则会产生间隙锁，内部扩大锁定范围，导致系统性能下降，产生死锁。</li>
+<li>【建议】减少使用order by，和业务沟通能不排序就不排序，或将排序放到程序端去做。Order by、group by、distinct这些语句较为耗费CPU，数据库的CPU资源是极其宝贵的。</li>
+<li>【建议】order by、group by、distinct这些SQL尽量利用索引直接检索出排序好的数据。如where a=1 order by b可以利用key(a,b)。</li>
+<li>【建议】包含了order by、group by、distinct这些查询的语句，where条件过滤出来的结果集请保持在1000行以内，否则SQL会很慢。</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/wangkunk/picture/master/blog_files/img/gongzhonghao.jpeg" alt="公众号" /></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-10-19
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          </div>
+      <nav class="post-nav">
+        
+        
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

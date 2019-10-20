@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MySQL on Even - A super concise theme for Hugo</title>
+    <link>https://wangkunk.github.io/tags/mysql/</link>
+    <description>Recent content in MySQL on Even - A super concise theme for Hugo</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 19 Oct 2019 19:20:21 +0800</lastBuildDate>
+    
+	<atom:link href="https://wangkunk.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>必看的数据库规范</title>
+      <link>https://wangkunk.github.io/post/%E5%BF%85%E7%9C%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A7%84%E8%8C%83/</link>
+      <pubDate>Sat, 19 Oct 2019 19:20:21 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/post/%E5%BF%85%E7%9C%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A7%84%E8%8C%83/</guid>
+      <description>前言： 关于MySQL数据库规范，相信大家多少看过一些文档。本篇文章给大家详细分类总结了数据库相关规范，从库表命名设计规范讲起，到索引设计规范</description>
+    </item>
+    
+  </channel>
+</rss>

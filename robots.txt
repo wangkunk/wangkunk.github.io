@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://wangkunk.github.io/sitemap.xml
