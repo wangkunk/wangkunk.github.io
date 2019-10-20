@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Linux安装MySQL标准教程 - Even - A super concise theme for Hugo</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="导读： 本文主要介绍 CentOS 系统二进制安装 MySQL 5.7.23 版本的安装步骤，其他版本安装过程相似。 1.前置准备 卸载旧版MySQL 查看rpm包 rpm -qa|grep mysql 若有可用rpm -" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/linux%E5%AE%89%E8%A3%85mysql%E6%A0%87%E5%87%86%E6%95%99%E7%A8%8B/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Linux安装MySQL标准教程" />
+<meta property="og:description" content="导读： 本文主要介绍 CentOS 系统二进制安装 MySQL 5.7.23 版本的安装步骤，其他版本安装过程相似。 1.前置准备 卸载旧版MySQL 查看rpm包 rpm -qa|grep mysql 若有可用rpm -" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/linux%E5%AE%89%E8%A3%85mysql%E6%A0%87%E5%87%86%E6%95%99%E7%A8%8B/" />
+<meta property="article:published_time" content="2019-10-20T13:07:50+08:00" />
+<meta property="article:modified_time" content="2019-10-20T13:07:50+08:00" />
+<meta itemprop="name" content="Linux安装MySQL标准教程">
+<meta itemprop="description" content="导读： 本文主要介绍 CentOS 系统二进制安装 MySQL 5.7.23 版本的安装步骤，其他版本安装过程相似。 1.前置准备 卸载旧版MySQL 查看rpm包 rpm -qa|grep mysql 若有可用rpm -">
+
+
+<meta itemprop="datePublished" content="2019-10-20T13:07:50&#43;08:00" />
+<meta itemprop="dateModified" content="2019-10-20T13:07:50&#43;08:00" />
+<meta itemprop="wordCount" content="684">
+
+
+
+<meta itemprop="keywords" content="MySQL," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linux安装MySQL标准教程"/>
+<meta name="twitter:description" content="导读： 本文主要介绍 CentOS 系统二进制安装 MySQL 5.7.23 版本的安装步骤，其他版本安装过程相似。 1.前置准备 卸载旧版MySQL 查看rpm包 rpm -qa|grep mysql 若有可用rpm -"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Linux安装MySQL标准教程</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-10-20 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 684 字 </span>
+          <span class="more-meta"> 预计阅读 2 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-前置准备">1.前置准备</a></li>
+<li><a href="#2-下载二进制安装包并解压">2.下载二进制安装包并解压</a></li>
+<li><a href="#3-创建mysql相关目录">3.创建mysql相关目录</a></li>
+<li><a href="#4-创建mysql配置文件my-cnf">4.创建mysql配置文件my.cnf</a></li>
+<li><a href="#5-配置mysql-server">5.配置mysql.server</a></li>
+<li><a href="#6-添加环境变量">6.添加环境变量</a></li>
+<li><a href="#7-初始化mysql">7.初始化mysql</a></li>
+<li><a href="#8-启动mysql服务-并修改密码">8.启动mysql服务 并修改密码</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
+
+<blockquote>
+<p>导读：
+本文主要介绍 CentOS 系统二进制安装 MySQL 5.7.23 版本的安装步骤，其他版本安装过程相似。</p>
+</blockquote>
+
+<h4 id="1-前置准备">1.前置准备</h4>
+
+<ul>
+<li><p>卸载旧版MySQL</p>
+
+<ul>
+<li>查看rpm包</li>
+</ul>
+
+<p><code>rpm -qa|grep mysql</code> 若有可用<code>rpm -e</code>卸载</p>
+
+<ul>
+<li>查找mysql残留包，有则删除，没有则忽略</li>
+</ul>
+
+<p><code>find / -name mysql</code></p></li>
+
+<li><p>安装相关依赖</p></li>
+</ul>
+
+<p><code>yum -y install make gcc-c++ cmake bison-devel  ncurses-devel numactl libaio</code></p>
+
+<ul>
+<li>创建用户和用户组</li>
+</ul>
+
+<p><code>groupadd mysql</code>
+  <code>useradd -s /sbin/nologin -g mysql -M mysql</code></p>
+
+<h4 id="2-下载二进制安装包并解压">2.下载二进制安装包并解压</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> /usr/local/
+<span class="c1"># wget下载或者本地下载后上传</span>
+wget https://downloads.mysql.com/archives/get/file/mysql-5.7.23-linux-glibc2.12-x86_64.tar.gz
+<span class="c1"># 解压安装包</span>
+tar -zxvf mysql-5.7.23-linux-glibc2.12-x86_64.tar.gz
+<span class="c1"># 解压后为了方便后面操作可把解压后文件名修改为mysql</span>
+mv mysql-5.7.23-linux-glibc2.12-x86_64 mysql
+<span class="c1"># 更改文件夹所属</span>
+chown -R mysql.mysql /usr/local/mysql/</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="3-创建mysql相关目录">3.创建mysql相关目录</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">mkdir -p /data/mysql/<span class="o">{</span>data,logs,tmp<span class="o">}</span>
+<span class="c1"># 更改文件夹所属</span>
+chown -R mysql.mysql /data/mysql/</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="4-创建mysql配置文件my-cnf">4.创建mysql配置文件my.cnf</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">vi /etc/my.cnf
+<span class="c1"># 简单模板如下：</span>
+<span class="o">[</span>client<span class="o">]</span>
+<span class="nv">port</span>            <span class="o">=</span> <span class="m">3306</span>
+<span class="nv">socket</span>          <span class="o">=</span> /data/mysql/tmp/mysql.sock
+
+<span class="o">[</span>mysqld<span class="o">]</span>
+<span class="nv">user</span> <span class="o">=</span> mysql
+<span class="nv">basedir</span> <span class="o">=</span> /usr/local/mysql        
+<span class="nv">datadir</span> <span class="o">=</span> /data/mysql/data  
+<span class="nv">port</span> <span class="o">=</span> <span class="m">3306</span>               
+
+<span class="nv">socket</span> <span class="o">=</span> /data/mysql/tmp/mysql.sock
+pid-file  <span class="o">=</span> /data/mysql/tmp/mysqld.pid
+<span class="nv">tmpdir</span> <span class="o">=</span> /data/mysql/tmp    
+<span class="nv">skip_name_resolve</span> <span class="o">=</span> <span class="m">1</span>
+symbolic-links<span class="o">=</span><span class="m">0</span>
+<span class="nv">max_connections</span> <span class="o">=</span> <span class="m">2000</span>
+<span class="nv">group_concat_max_len</span> <span class="o">=</span> <span class="m">1024000</span>
+<span class="nv">sql_mode</span> <span class="o">=</span> NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+<span class="nv">lower_case_table_names</span> <span class="o">=</span> <span class="m">1</span>
+<span class="nv">log_timestamps</span><span class="o">=</span>SYSTEM
+character-set-server <span class="o">=</span> utf8
+<span class="nv">interactive_timeout</span> <span class="o">=</span> <span class="m">1800</span>  
+<span class="nv">wait_timeout</span> <span class="o">=</span> <span class="m">1800</span>
+<span class="nv">max_allowed_packet</span> <span class="o">=</span> 32M
+<span class="nv">binlog_cache_size</span> <span class="o">=</span> 4M
+<span class="nv">sort_buffer_size</span> <span class="o">=</span> 2M
+<span class="nv">read_buffer_size</span> <span class="o">=</span> 4M
+<span class="nv">join_buffer_size</span> <span class="o">=</span> 4M
+<span class="nv">tmp_table_size</span> <span class="o">=</span> 96M
+<span class="nv">max_heap_table_size</span> <span class="o">=</span> 96M
+<span class="nv">max_length_for_sort_data</span> <span class="o">=</span> <span class="m">8096</span>
+
+<span class="c1">#logs</span>
+server-id <span class="o">=</span> <span class="m">1003306</span>
+log-error <span class="o">=</span> /data/mysql/logs/error.log
+<span class="nv">slow_query_log</span> <span class="o">=</span> <span class="m">1</span>
+<span class="nv">slow_query_log_file</span> <span class="o">=</span> /data/mysql/logs/slow.log
+<span class="nv">long_query_time</span> <span class="o">=</span> <span class="m">3</span>
+log-bin <span class="o">=</span> /data/mysql/logs/binlog
+<span class="nv">binlog_format</span> <span class="o">=</span> row
+<span class="nv">expire_logs_days</span> <span class="o">=</span> <span class="m">15</span>
+<span class="nv">log_bin_trust_function_creators</span> <span class="o">=</span> <span class="m">1</span>
+relay-log <span class="o">=</span> /data/mysql/logs/relay-bin
+relay-log-recovery <span class="o">=</span> <span class="m">1</span>  
+<span class="nv">relay_log_purge</span> <span class="o">=</span> <span class="m">1</span>  
+
+<span class="c1">#innodb</span>  
+<span class="nv">innodb_file_per_table</span> <span class="o">=</span> <span class="m">1</span>
+<span class="nv">innodb_log_buffer_size</span> <span class="o">=</span> 16M
+<span class="nv">innodb_log_file_size</span> <span class="o">=</span> 256M
+<span class="nv">innodb_log_files_in_group</span> <span class="o">=</span> <span class="m">2</span>
+<span class="nv">innodb_io_capacity</span> <span class="o">=</span> <span class="m">2000</span>
+<span class="nv">innodb_io_capacity_max</span> <span class="o">=</span> <span class="m">4000</span>
+<span class="nv">innodb_flush_neighbors</span> <span class="o">=</span> <span class="m">0</span>
+<span class="nv">innodb_flush_method</span> <span class="o">=</span> O_DIRECT
+<span class="nv">innodb_autoinc_lock_mode</span> <span class="o">=</span> <span class="m">2</span>
+<span class="nv">innodb_read_io_threads</span> <span class="o">=</span> <span class="m">8</span>
+<span class="nv">innodb_write_io_threads</span> <span class="o">=</span> <span class="m">8</span>
+<span class="nv">innodb_buffer_pool_size</span> <span class="o">=</span> 2G</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="5-配置mysql-server">5.配置mysql.server</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">cd</span> /usr/local/mysql/support-files
+cp mysql.server /etc/init.d/mysql
+vi /etc/init.d/mysql
+<span class="c1"># 修改目录位置</span>
+<span class="nv">basedir</span><span class="o">=</span>/usr/local/mysql
+<span class="nv">datadir</span><span class="o">=</span>/data/mysql/data
+
+<span class="c1"># 注册开机启动服务</span>
+chkconfig --add mysql
+chkconfig --list</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="6-添加环境变量">6.添加环境变量</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">echo</span> <span class="s2">&#34;PATH=</span><span class="nv">$PATH</span><span class="s2">:/usr/local/mysql/bin  &#34;</span> &gt;&gt; /etc/profile  
+<span class="nb">source</span> /etc/profile</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="7-初始化mysql">7.初始化mysql</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">/usr/local/mysql/bin/mysqld  --initialize --user<span class="o">=</span>mysql --basedir<span class="o">=</span>/usr/local/mysql --datadir<span class="o">=</span>/data/mysql/data
+<span class="c1"># 临时密码保存在errlog中</span> 
+<span class="c1"># 获取临时密码</span>
+more /data/mysql/logs/error.log <span class="p">|</span>grep password</code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="8-启动mysql服务-并修改密码">8.启动mysql服务 并修改密码</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 启动mysql服务</span>
+service mysql start
+<span class="c1"># 使用初始密码登录mysql服务 并修改密码</span>
+mysql -uroot -p
+alter user <span class="s1">&#39;root&#39;</span>@<span class="s1">&#39;localhost&#39;</span> identified by <span class="s1">&#39;root&#39;</span><span class="p">;</span>
+flush privileges<span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><img src="https://img2018.cnblogs.com/blog/1118724/201905/1118724-20190530180334394-1002192324.jpg" alt="欢迎关注" /></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-10-20
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/mysql%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E7%AE%80%E4%BB%8B/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">MySQL查询语法简介</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%BF%85%E7%9C%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A7%84%E8%8C%83/">
+            <span class="next-text nav-default">必看的数据库规范</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

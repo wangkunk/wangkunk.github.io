@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>MySQL查询语法简介 - Even - A super concise theme for Hugo</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="本篇文章主要简介下MySQL中where,group by ,order by ,limit,join,union ,union all,子表等查询语法。 测试数据准备 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/mysql%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E7%AE%80%E4%BB%8B/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="MySQL查询语法简介" />
+<meta property="og:description" content="本篇文章主要简介下MySQL中where,group by ,order by ,limit,join,union ,union all,子表等查询语法。 测试数据准备 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/mysql%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E7%AE%80%E4%BB%8B/" />
+<meta property="article:published_time" content="2019-10-20T13:13:40+08:00" />
+<meta property="article:modified_time" content="2019-10-20T13:13:40+08:00" />
+<meta itemprop="name" content="MySQL查询语法简介">
+<meta itemprop="description" content="本篇文章主要简介下MySQL中where,group by ,order by ,limit,join,union ,union all,子表等查询语法。 测试数据准备 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21">
+
+
+<meta itemprop="datePublished" content="2019-10-20T13:13:40&#43;08:00" />
+<meta itemprop="dateModified" content="2019-10-20T13:13:40&#43;08:00" />
+<meta itemprop="wordCount" content="3302">
+
+
+
+<meta itemprop="keywords" content="MySQL," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL查询语法简介"/>
+<meta name="twitter:description" content="本篇文章主要简介下MySQL中where,group by ,order by ,limit,join,union ,union all,子表等查询语法。 测试数据准备 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">MySQL查询语法简介</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-10-20 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 3302 字 </span>
+          <span class="more-meta"> 预计阅读 7 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#测试数据准备">测试数据准备</a></li>
+<li><a href="#1-模糊查询">1.模糊查询</a></li>
+<li><a href="#2-排序">2.排序</a></li>
+<li><a href="#3-限制多少行">3.限制多少行</a></li>
+<li><a href="#4-聚合函数">4.聚合函数</a></li>
+<li><a href="#5-left-join">5.left join</a></li>
+<li><a href="#6-right-join">6.right join</a></li>
+<li><a href="#7-inner-join">7.inner join</a></li>
+<li><a href="#8-union与union-all">8.union与union all</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      
+
+<p>本篇文章主要简介下MySQL中where,group by ,order by ,limit,join,union ,union all,子表等查询语法。</p>
+
+<h5 id="测试数据准备">测试数据准备</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">create table emp (
+    empno numeric(4) not null,
+    ename varchar(10),
+    job varchar(9),
+    mgr numeric(4),
+    hiredate datetime,
+    sal numeric(7, 2),
+    comm numeric(7, 2),
+    deptno numeric(2)
+);
+
+create table dept (
+    deptno numeric(2),
+    dname varchar(14),
+    loc varchar(13)
+);
+
+create table salgrade (
+    grade numeric,
+    losal numeric,
+    hisal numeric
+);
+
+insert into dept values (10, &#39;ACCOUNTING&#39;, &#39;NEW YORK&#39;);
+insert into dept values (20, &#39;RESEARCH&#39;, &#39;DALLAS&#39;);
+insert into dept values (30, &#39;SALES&#39;, &#39;CHICAGO&#39;);
+insert into dept values (40, &#39;OPERATIONS&#39;, &#39;BOSTON&#39;);
+
+insert into salgrade values (1, 700, 1200);
+insert into salgrade values (2, 1201, 1400);
+insert into salgrade values (3, 1401, 2000);
+insert into salgrade values (4, 2001, 3000);
+insert into salgrade values (5, 3001, 9999);
+
+insert into emp values (7369, &#39;SMITH&#39;, &#39;CLERK&#39;, 7902, &#39;1980-12-17&#39;, 800, null, 20);
+insert into emp values (7499, &#39;ALLEN&#39;, &#39;SALESMAN&#39;, 7698, &#39;1981-02-20&#39;, 1600, 300, 30);
+insert into emp values (7521, &#39;WARD&#39;, &#39;SALESMAN&#39;, 7698, &#39;1981-02-22&#39;, 1250, 500, 30);
+insert into emp values (7566, &#39;JONES&#39;, &#39;MANAGER&#39;, 7839, &#39;1981-04-02&#39;, 2975, null, 20);
+insert into emp values (7654, &#39;MARTIN&#39;, &#39;SALESMAN&#39;, 7698, &#39;1981-09-28&#39;, 1250, 1400, 30);
+insert into emp values (7698, &#39;BLAKE&#39;, &#39;MANAGER&#39;, 7839, &#39;1981-05-01&#39;, 2850, null, 30);
+insert into emp values (7782, &#39;CLARK&#39;, &#39;MANAGER&#39;, 7839, &#39;1981-06-09&#39;, 2450, null, 10);
+insert into emp values (7788, &#39;SCOTT&#39;, &#39;ANALYST&#39;, 7566, &#39;1982-12-09&#39;, 3000, null, 20);
+insert into emp values (7839, &#39;KING&#39;, &#39;PRESIDENT&#39;, null, &#39;1981-11-17&#39;, 5000, null, 10);
+insert into emp values (7844, &#39;TURNER&#39;, &#39;SALESMAN&#39;, 7698, &#39;1981-09-08&#39;, 1500, 0, 30);
+insert into emp values (7876, &#39;ADAMS&#39;, &#39;CLERK&#39;, 7788, &#39;1983-01-12&#39;, 1100, null, 20);
+insert into emp values (7900, &#39;JAMES&#39;, &#39;CLERK&#39;, 7698, &#39;1981-12-03&#39;, 950, null, 30);
+insert into emp values (7902, &#39;FORD&#39;, &#39;ANALYST&#39;, 7566, &#39;1981-12-03&#39;, 3000, null, 20);
+insert into emp values (7934, &#39;MILLER&#39;, &#39;CLERK&#39;, 7782, &#39;1982-01-23&#39;, 1300, null, 10);</pre></td></tr></table>
+</div>
+</div>
+<h5 id="1-模糊查询">1.模糊查询</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">mysql&gt; select * from emp where ename like &#39;%S%&#39;; 
++-------+-------+---------+------+---------------------+---------+------+--------+
+| empno | ename | job     | mgr  | hiredate            | sal     | comm | deptno |
++-------+-------+---------+------+---------------------+---------+------+--------+
+|  7369 | SMITH | CLERK   | 7902 | 1980-12-17 00:00:00 |  800.00 | NULL |     20 |
+|  7566 | JONES | MANAGER | 7839 | 1981-04-02 00:00:00 | 2975.00 | NULL |     20 |
+|  7788 | SCOTT | ANALYST | 7566 | 1982-12-09 00:00:00 | 3000.00 | NULL |     20 |
+|  7876 | ADAMS | CLERK   | 7788 | 1983-01-12 00:00:00 | 1100.00 | NULL |     20 |
+|  7900 | JAMES | CLERK   | 7698 | 1981-12-03 00:00:00 |  950.00 | NULL |     30 |
++-------+-------+---------+------+---------------------+---------+------+--------+
+5 rows in set (0.00 sec)
+
+mysql&gt; select * from emp where ename like &#39;S%&#39;; 
++-------+-------+---------+------+---------------------+---------+------+--------+
+| empno | ename | job     | mgr  | hiredate            | sal     | comm | deptno |
++-------+-------+---------+------+---------------------+---------+------+--------+
+|  7369 | SMITH | CLERK   | 7902 | 1980-12-17 00:00:00 |  800.00 | NULL |     20 |
+|  7788 | SCOTT | ANALYST | 7566 | 1982-12-09 00:00:00 | 3000.00 | NULL |     20 |
++-------+-------+---------+------+---------------------+---------+------+--------+
+2 rows in set (0.01 sec)
+
+mysql&gt; select * from emp where ename like &#39;%S&#39;;
++-------+-------+---------+------+---------------------+---------+------+--------+
+| empno | ename | job     | mgr  | hiredate            | sal     | comm | deptno |
++-------+-------+---------+------+---------------------+---------+------+--------+
+|  7566 | JONES | MANAGER | 7839 | 1981-04-02 00:00:00 | 2975.00 | NULL |     20 |
+|  7876 | ADAMS | CLERK   | 7788 | 1983-01-12 00:00:00 | 1100.00 | NULL |     20 |
+|  7900 | JAMES | CLERK   | 7698 | 1981-12-03 00:00:00 |  950.00 | NULL |     30 |
++-------+-------+---------+------+---------------------+---------+------+--------+
+3 rows in set (0.00 sec)
+
+mysql&gt; select * from emp where ename like &#39;_O%&#39;;
++-------+-------+---------+------+---------------------+---------+------+--------+
+| empno | ename | job     | mgr  | hiredate            | sal     | comm | deptno |
++-------+-------+---------+------+---------------------+---------+------+--------+
+|  7566 | JONES | MANAGER | 7839 | 1981-04-02 00:00:00 | 2975.00 | NULL |     20 |
+|  7902 | FORD  | ANALYST | 7566 | 1981-12-03 00:00:00 | 3000.00 | NULL |     20 |
++-------+-------+---------+------+---------------------+---------+------+--------+
+2 rows in set (0.00 sec)
+总结：
+%表示任意0个或多个字符，可匹配任意类型和长度的字符；
+_表示任意单个字符，匹配单个任意字符。</pre></td></tr></table>
+</div>
+</div>
+<h5 id="2-排序">2.排序</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">mysql&gt; select * from emp order by  sal;
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+| empno | ename  | job       | mgr  | hiredate            | sal     | comm    | deptno |
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+|  7369 | SMITH  | CLERK     | 7902 | 1980-12-17 00:00:00 |  800.00 |    NULL |     20 |
+|  7900 | JAMES  | CLERK     | 7698 | 1981-12-03 00:00:00 |  950.00 |    NULL |     30 |
+|  7876 | ADAMS  | CLERK     | 7788 | 1983-01-12 00:00:00 | 1100.00 |    NULL |     20 |
+|  7521 | WARD   | SALESMAN  | 7698 | 1981-02-22 00:00:00 | 1250.00 |  500.00 |     30 |
+|  7654 | MARTIN | SALESMAN  | 7698 | 1981-09-28 00:00:00 | 1250.00 | 1400.00 |     30 |
+|  7934 | MILLER | CLERK     | 7782 | 1982-01-23 00:00:00 | 1300.00 |    NULL |     10 |
+|  7844 | TURNER | SALESMAN  | 7698 | 1981-09-08 00:00:00 | 1500.00 |    0.00 |     30 |
+|  7499 | ALLEN  | SALESMAN  | 7698 | 1981-02-20 00:00:00 | 1600.00 |  300.00 |     30 |
+|  7782 | CLARK  | MANAGER   | 7839 | 1981-06-09 00:00:00 | 2450.00 |    NULL |     10 |
+|  7698 | BLAKE  | MANAGER   | 7839 | 1981-05-01 00:00:00 | 2850.00 |    NULL |     30 |
+|  7566 | JONES  | MANAGER   | 7839 | 1981-04-02 00:00:00 | 2975.00 |    NULL |     20 |
+|  7788 | SCOTT  | ANALYST   | 7566 | 1982-12-09 00:00:00 | 3000.00 |    NULL |     20 |
+|  7902 | FORD   | ANALYST   | 7566 | 1981-12-03 00:00:00 | 3000.00 |    NULL |     20 |
+|  7839 | KING   | PRESIDENT | NULL | 1981-11-17 00:00:00 | 5000.00 |    NULL |     10 |
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+14 rows in set (0.00 sec)
+
+mysql&gt; select * from emp order by  sal asc;
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+| empno | ename  | job       | mgr  | hiredate            | sal     | comm    | deptno |
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+|  7369 | SMITH  | CLERK     | 7902 | 1980-12-17 00:00:00 |  800.00 |    NULL |     20 |
+|  7900 | JAMES  | CLERK     | 7698 | 1981-12-03 00:00:00 |  950.00 |    NULL |     30 |
+|  7876 | ADAMS  | CLERK     | 7788 | 1983-01-12 00:00:00 | 1100.00 |    NULL |     20 |
+|  7521 | WARD   | SALESMAN  | 7698 | 1981-02-22 00:00:00 | 1250.00 |  500.00 |     30 |
+|  7654 | MARTIN | SALESMAN  | 7698 | 1981-09-28 00:00:00 | 1250.00 | 1400.00 |     30 |
+|  7934 | MILLER | CLERK     | 7782 | 1982-01-23 00:00:00 | 1300.00 |    NULL |     10 |
+|  7844 | TURNER | SALESMAN  | 7698 | 1981-09-08 00:00:00 | 1500.00 |    0.00 |     30 |
+|  7499 | ALLEN  | SALESMAN  | 7698 | 1981-02-20 00:00:00 | 1600.00 |  300.00 |     30 |
+|  7782 | CLARK  | MANAGER   | 7839 | 1981-06-09 00:00:00 | 2450.00 |    NULL |     10 |
+|  7698 | BLAKE  | MANAGER   | 7839 | 1981-05-01 00:00:00 | 2850.00 |    NULL |     30 |
+|  7566 | JONES  | MANAGER   | 7839 | 1981-04-02 00:00:00 | 2975.00 |    NULL |     20 |
+|  7788 | SCOTT  | ANALYST   | 7566 | 1982-12-09 00:00:00 | 3000.00 |    NULL |     20 |
+|  7902 | FORD   | ANALYST   | 7566 | 1981-12-03 00:00:00 | 3000.00 |    NULL |     20 |
+|  7839 | KING   | PRESIDENT | NULL | 1981-11-17 00:00:00 | 5000.00 |    NULL |     10 |
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+14 rows in set (0.00 sec)
+
+mysql&gt; select * from emp order by  sal desc;
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+| empno | ename  | job       | mgr  | hiredate            | sal     | comm    | deptno |
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+|  7839 | KING   | PRESIDENT | NULL | 1981-11-17 00:00:00 | 5000.00 |    NULL |     10 |
+|  7788 | SCOTT  | ANALYST   | 7566 | 1982-12-09 00:00:00 | 3000.00 |    NULL |     20 |
+|  7902 | FORD   | ANALYST   | 7566 | 1981-12-03 00:00:00 | 3000.00 |    NULL |     20 |
+|  7566 | JONES  | MANAGER   | 7839 | 1981-04-02 00:00:00 | 2975.00 |    NULL |     20 |
+|  7698 | BLAKE  | MANAGER   | 7839 | 1981-05-01 00:00:00 | 2850.00 |    NULL |     30 |
+|  7782 | CLARK  | MANAGER   | 7839 | 1981-06-09 00:00:00 | 2450.00 |    NULL |     10 |
+|  7499 | ALLEN  | SALESMAN  | 7698 | 1981-02-20 00:00:00 | 1600.00 |  300.00 |     30 |
+|  7844 | TURNER | SALESMAN  | 7698 | 1981-09-08 00:00:00 | 1500.00 |    0.00 |     30 |
+|  7934 | MILLER | CLERK     | 7782 | 1982-01-23 00:00:00 | 1300.00 |    NULL |     10 |
+|  7521 | WARD   | SALESMAN  | 7698 | 1981-02-22 00:00:00 | 1250.00 |  500.00 |     30 |
+|  7654 | MARTIN | SALESMAN  | 7698 | 1981-09-28 00:00:00 | 1250.00 | 1400.00 |     30 |
+|  7876 | ADAMS  | CLERK     | 7788 | 1983-01-12 00:00:00 | 1100.00 |    NULL |     20 |
+|  7900 | JAMES  | CLERK     | 7698 | 1981-12-03 00:00:00 |  950.00 |    NULL |     30 |
+|  7369 | SMITH  | CLERK     | 7902 | 1980-12-17 00:00:00 |  800.00 |    NULL |     20 |
++-------+--------+-----------+------+---------------------+---------+---------+--------+
+14 rows in set (0.00 sec)
+总结：
+order by排序默认按asc升序来排列
+也可指定desc降序排列</pre></td></tr></table>
+</div>
+</div>
+<h5 id="3-限制多少行">3.限制多少行</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">mysql&gt; select * from emp limit  3;
++-------+-------+----------+------+---------------------+---------+--------+--------+
+| empno | ename | job      | mgr  | hiredate            | sal     | comm   | deptno |
++-------+-------+----------+------+---------------------+---------+--------+--------+
+|  7369 | SMITH | CLERK    | 7902 | 1980-12-17 00:00:00 |  800.00 |   NULL |     20 |
+|  7499 | ALLEN | SALESMAN | 7698 | 1981-02-20 00:00:00 | 1600.00 | 300.00 |     30 |
+|  7521 | WARD  | SALESMAN | 7698 | 1981-02-22 00:00:00 | 1250.00 | 500.00 |     30 |
++-------+-------+----------+------+---------------------+---------+--------+--------+
+3 rows in set (0.00 sec)
+
+mysql&gt; select * from emp order by  sal desc limit  3;
++-------+-------+-----------+------+---------------------+---------+------+--------+
+| empno | ename | job       | mgr  | hiredate            | sal     | comm | deptno |
++-------+-------+-----------+------+---------------------+---------+------+--------+
+|  7839 | KING  | PRESIDENT | NULL | 1981-11-17 00:00:00 | 5000.00 | NULL |     10 |
+|  7902 | FORD  | ANALYST   | 7566 | 1981-12-03 00:00:00 | 3000.00 | NULL |     20 |
+|  7788 | SCOTT | ANALYST   | 7566 | 1982-12-09 00:00:00 | 3000.00 | NULL |     20 |
++-------+-------+-----------+------+---------------------+---------+------+--------+
+3 rows in set (0.00 sec)
+总结：
+limit限定显示前多少行，可与order by联合使用</pre></td></tr></table>
+</div>
+</div>
+<h5 id="4-聚合函数">4.聚合函数</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">count() sum()函数用法：
+#1.各个部门的薪水和
+mysql&gt; select deptno,sum(sal) from  emp group by deptno;
++--------+----------+
+| deptno | sum(sal) |
++--------+----------+
+|     10 |  8750.00 |
+|     20 | 10875.00 |
+|     30 |  9400.00 |
++--------+----------+
+3 rows in set (0.01 sec)
+
+#2.group by字段必须出现在select字段后面   各个部门的各个岗位的薪水和
+mysql&gt; select deptno,job, sum(sal) from  emp group by deptno ,job;
++--------+-----------+----------+
+| deptno | job       | sum(sal) |
++--------+-----------+----------+
+|     10 | CLERK     |  1300.00 |
+|     10 | MANAGER   |  2450.00 |
+|     10 | PRESIDENT |  5000.00 |
+|     20 | ANALYST   |  6000.00 |
+|     20 | CLERK     |  1900.00 |
+|     20 | MANAGER   |  2975.00 |
+|     30 | CLERK     |   950.00 |
+|     30 | MANAGER   |  2850.00 |
+|     30 | SALESMAN  |  5600.00 |
++--------+-----------+----------+
+9 rows in set (0.01 sec)
+
+#3.having    薪水和&gt;5000的各个部门的各个岗位
+mysql&gt; select deptno,job,  sum(sal) 
+    -&gt; from  emp 
+    -&gt; group by deptno ,job
+    -&gt; having  sum(sal)&gt;5000; 
++--------+----------+----------+
+| deptno | job      | sum(sal) |
++--------+----------+----------+
+|     20 | ANALYST  |  6000.00 |
+|     30 | SALESMAN |  5600.00 |
++--------+----------+----------+
+2 rows in set (0.00 sec)
+#4.常用组合where  order  limit 
+select deptno,job,  sum(sal) as sum_sal
+from  emp 
+where job=&#39;SALESMAN&#39;
+group by deptno ,job
+having  sum(sal)&gt;5000 
+order by sum(sal) desc 
+limit 1;</pre></td></tr></table>
+</div>
+</div>
+<p>下面介绍下join及union的用法
+数据准备：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">create table testa(aid int,aname varchar(40));
+
+create table testb(bid int,bname varchar(40),age int);
+
+insert into testa values(1,&#39;xiaoming&#39;);
+insert into testa values(2,&#39;LY&#39;);
+insert into testa values(3,&#39;KUN&#39;);
+insert into testa values(4,&#39;ZIDONG&#39;);
+insert into testa values(5,&#39;HB&#39;);
+
+
+insert into testb values(1,&#39;xiaoming&#39;,10);
+insert into testb values(2,&#39;LY&#39;,100);
+insert into testb values(3,&#39;KUN&#39;,200);
+insert into testb values(4,&#39;ZIDONG&#39;,110);
+insert into testb values(6,&#39;niu&#39;,120);
+insert into testb values(7,&#39;meng&#39;,130);
+insert into testb values(8,&#39;mi&#39;,170);</pre></td></tr></table>
+</div>
+</div>
+<h5 id="5-left-join">5.left join</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">mysql&gt; select
+    -&gt; a.aid,a.aname,
+    -&gt; b.bid,b.bname,b.age
+    -&gt; from testa as a
+    -&gt; left join testb as b on a.aid=b.bid; 
++------+----------+------+----------+------+
+| aid  | aname    | bid  | bname    | age  |
++------+----------+------+----------+------+
+|    1 | xiaoming |    1 | xiaoming |   10 |
+|    2 | LY       |    2 | LY       |  100 |
+|    3 | KUN      |    3 | KUN      |  200 |
+|    4 | ZIDONG   |    4 | ZIDONG   |  110 |
+|    5 | HB       | NULL | NULL     | NULL |
++------+----------+------+----------+------+
+5 rows in set (0.00 sec)
+总结：
+a left join b  a表全，用b表去匹配a表
+LEFT JOIN 关键字会从左表 (a) 那里返回所有的行，即使在右表 (b) 中没有匹配的行,匹配不到的列用NULL代替</pre></td></tr></table>
+</div>
+</div>
+<h5 id="6-right-join">6.right join</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">mysql&gt; select
+    -&gt; a.aid,a.aname,
+    -&gt; b.bid,b.bname,b.age
+    -&gt; from testa as a
+    -&gt; right join testb as b on a.aid=b.bid;
++------+----------+------+----------+------+
+| aid  | aname    | bid  | bname    | age  |
++------+----------+------+----------+------+
+|    1 | xiaoming |    1 | xiaoming |   10 |
+|    2 | LY       |    2 | LY       |  100 |
+|    3 | KUN      |    3 | KUN      |  200 |
+|    4 | ZIDONG   |    4 | ZIDONG   |  110 |
+| NULL | NULL     |    6 | niu      |  120 |
+| NULL | NULL     |    7 | meng     |  130 |
+| NULL | NULL     |    8 | mi       |  170 |
++------+----------+------+----------+------+
+7 rows in set (0.00 sec)
+总结：
+a right join b  b表全，用a表去匹配b表
+RIGHT JOIN 关键字会右表 (b) 那里返回所有的行，即使在左表 (a) 中没有匹配的行,匹配不到的列用NULL代替</pre></td></tr></table>
+</div>
+</div>
+<h5 id="7-inner-join">7.inner join</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">mysql&gt; select
+    -&gt; a.aid,a.aname,
+    -&gt; b.bid,b.bname,b.age
+    -&gt; from testa as a
+    -&gt; inner join testb as b on a.aid=b.bid; 
++------+----------+------+----------+------+
+| aid  | aname    | bid  | bname    | age  |
++------+----------+------+----------+------+
+|    1 | xiaoming |    1 | xiaoming |   10 |
+|    2 | LY       |    2 | LY       |  100 |
+|    3 | KUN      |    3 | KUN      |  200 |
+|    4 | ZIDONG   |    4 | ZIDONG   |  110 |
++------+----------+------+----------+------+
+4 rows in set (0.00 sec)
+
+mysql&gt; select
+    -&gt; a.aid,a.aname,
+    -&gt; b.bid,b.bname,b.age
+    -&gt; from testa as a
+    -&gt; join testb as b on a.aid=b.bid; 
++------+----------+------+----------+------+
+| aid  | aname    | bid  | bname    | age  |
++------+----------+------+----------+------+
+|    1 | xiaoming |    1 | xiaoming |   10 |
+|    2 | LY       |    2 | LY       |  100 |
+|    3 | KUN      |    3 | KUN      |  200 |
+|    4 | ZIDONG   |    4 | ZIDONG   |  110 |
++------+----------+------+----------+------+
+4 rows in set (0.00 sec)
+总结：
+inner join 与join 效果一样
+在表中存在至少一个匹配时，INNER JOIN 关键字返回行</pre></td></tr></table>
+</div>
+</div>
+<h5 id="8-union与union-all">8.union与union all</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></pre></td>
+<td class="lntd">
+<pre class="chroma">mysql&gt; select aid,aname from testa
+    -&gt; union
+    -&gt; select bid,bname from testb;
++------+----------+
+| aid  | aname    |
++------+----------+
+|    1 | xiaoming |
+|    2 | LY       |
+|    3 | KUN      |
+|    4 | ZIDONG   |
+|    5 | HB       |
+|    6 | niu      |
+|    7 | meng     |
+|    8 | mi       |
++------+----------+
+8 rows in set (0.01 sec)
+
+mysql&gt; select aid,aname from testa
+    -&gt; union all
+    -&gt; select bid,bname from testb;
++------+----------+
+| aid  | aname    |
++------+----------+
+|    1 | xiaoming |
+|    2 | LY       |
+|    3 | KUN      |
+|    4 | ZIDONG   |
+|    5 | HB       |
+|    1 | xiaoming |
+|    2 | LY       |
+|    3 | KUN      |
+|    4 | ZIDONG   |
+|    6 | niu      |
+|    7 | meng     |
+|    8 | mi       |
++------+----------+
+12 rows in set (0.00 sec)
+总结：
+union 会去重 union all不去重</pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-10-20
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/linux%E5%AE%89%E8%A3%85mysql%E6%A0%87%E5%87%86%E6%95%99%E7%A8%8B/">
+            <span class="next-text nav-default">Linux安装MySQL标准教程</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
