@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Even - A super concise theme for Hugo</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 20 Oct 2019 13:13:40 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 23 Oct 2019 14:43:53 +0800</lastBuildDate>
     
 	<atom:link href="https://wangkunk.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,27 @@
     <item>
       <title>MySQL</title>
       <link>https://wangkunk.github.io/tags/mysql/</link>
-      <pubDate>Sun, 20 Oct 2019 13:13:40 +0800</pubDate>
+      <pubDate>Wed, 23 Oct 2019 14:43:53 +0800</pubDate>
       
       <guid>https://wangkunk.github.io/tags/mysql/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mysqldump</title>
+      <link>https://wangkunk.github.io/tags/mysqldump/</link>
+      <pubDate>Wed, 23 Oct 2019 14:43:53 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/tags/mysqldump/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Linux</title>
+      <link>https://wangkunk.github.io/tags/linux/</link>
+      <pubDate>Sun, 20 Oct 2019 13:07:50 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/tags/linux/</guid>
       <description></description>
     </item>
     
