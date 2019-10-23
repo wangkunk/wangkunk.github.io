@@ -6,10 +6,19 @@
     <description>Recent content on MySQL Technology Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 23 Oct 2019 15:25:58 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 23 Oct 2019 15:52:04 +0800</lastBuildDate>
     
 	<atom:link href="https://wangkunk.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>About</title>
+      <link>https://wangkunk.github.io/about/</link>
+      <pubDate>Wed, 23 Oct 2019 15:52:04 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/about/</guid>
+      <description>欢迎关注公众号『MySQL技术』：</description>
+    </item>
     
     <item>
       <title>Lower_case_table_names参数详解</title>
