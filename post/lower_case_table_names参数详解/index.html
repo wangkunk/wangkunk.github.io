@@ -174,10 +174,13 @@ lower_case_table_names 是mysql设置大小写是否敏感的一个参数，本�
 <h5 id="1-参数说明">1.参数说明：</h5>
 
 <blockquote>
-<p>lower_case_table_names=0  表名存储为给定的大小和比较是区分大小写的
-lower_case_table_names = 1  表名存储在磁盘是小写的，但是比较的时候是不区分大小写
- lower_case_table_names=2 表名存储为给定的大小写但是比较的时候是小写的
-<strong>unix,linux下lower_case_table_names默认值为 0 .Windows下默认值是 1 .Mac OS X下默认值是 2</strong></p>
+<p>lower_case_table_names=0  表名存储为给定的大小和比较是区分大小写的</p>
+
+<p>lower_case_table_names = 1  表名存储在磁盘是小写的，但是比较的时候是不区分大小写</p>
+
+<p>lower_case_table_names=2 表名存储为给定的大小写但是比较的时候是小写的</p>
+
+<p><strong>unix,linux下lower_case_table_names默认值为 0 .Windows下默认值是 1 .Mac OS X下默认值是 2</strong></p>
 </blockquote>
 
 <h5 id="2-查看方法">2.查看方法：</h5>
@@ -196,9 +199,11 @@ lower_case_table_names = 1  表名存储在磁盘是小写的，但是比较的�
 <h5 id="3-更改方法">3.更改方法：</h5>
 
 <blockquote>
-<p>更改数据库参数文件my.cnf
-在mysqld下 添加或修改 lower_case_table_names = 1
-之后重启数据库</p>
+<p>更改数据库参数文件my.cnf</p>
+
+<p>在mysqld下 添加或修改 lower_case_table_names = 1</p>
+
+<p>之后重启数据库</p>
 </blockquote>
 
 <h5 id="4-现实情况修改-注意事项">4.现实情况修改 注意事项：</h5>
@@ -207,12 +212,17 @@ lower_case_table_names = 1  表名存储在磁盘是小写的，但是比较的�
 这时 更改步骤如下：</p>
 
 <blockquote>
-<p>1.核实实例中是否存在大写的库及表
-2.将大写的库名及表名改为小写
-更改库名可参考：<a href="https://www.cnblogs.com/gomysql/p/3584881.html">https://www.cnblogs.com/gomysql/p/3584881.html</a>
-更改表名：rename table TEST_TB to test_tb;
-3.设置lower_case_table_names = 1
-4.重启数据库</p>
+<p>1.核实实例中是否存在大写的库及表</p>
+
+<p>2.将大写的库名及表名改为小写</p>
+
+<p>更改库名可参考：<a href="https://www.cnblogs.com/gomysql/p/3584881.html">https://www.cnblogs.com/gomysql/p/3584881.html</a></p>
+
+<p>更改表名：rename table TEST_TB to test_tb;</p>
+
+<p>3.设置lower_case_table_names = 1</p>
+
+<p>4.重启数据库</p>
 </blockquote>
     </div>
 
