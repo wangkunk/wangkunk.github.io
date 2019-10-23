@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>mysqldump on Even - A super concise theme for Hugo</title>
+    <title>mysqldump on MySQL Technology Blog</title>
     <link>https://wangkunk.github.io/tags/mysqldump/</link>
-    <description>Recent content in mysqldump on Even - A super concise theme for Hugo</description>
+    <description>Recent content in mysqldump on MySQL Technology Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Wed, 23 Oct 2019 14:43:53 +0800</lastBuildDate>
