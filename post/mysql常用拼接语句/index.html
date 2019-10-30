@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>MySQL常用拼接语句 - MySQL Technology Blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="前言：
+在MySQL中 CONCAT ()函数用于将多个字符串连接成一个字符串，利用此函数我们可以将原来一步无法得到的sql拼接出来，在工作中也许会方便很多，下面主要介绍下几个常用的场景。
+" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/mysql%E5%B8%B8%E7%94%A8%E6%8B%BC%E6%8E%A5%E8%AF%AD%E5%8F%A5/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="MySQL常用拼接语句" />
+<meta property="og:description" content="前言：
+
+在MySQL中 CONCAT ()函数用于将多个字符串连接成一个字符串，利用此函数我们可以将原来一步无法得到的sql拼接出来，在工作中也许会方便很多，下面主要介绍下几个常用的场景。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/mysql%E5%B8%B8%E7%94%A8%E6%8B%BC%E6%8E%A5%E8%AF%AD%E5%8F%A5/" />
+<meta property="article:published_time" content="2019-10-30T17:20:22+08:00" />
+<meta property="article:modified_time" content="2019-10-30T17:20:22+08:00" />
+<meta itemprop="name" content="MySQL常用拼接语句">
+<meta itemprop="description" content="前言：
+
+在MySQL中 CONCAT ()函数用于将多个字符串连接成一个字符串，利用此函数我们可以将原来一步无法得到的sql拼接出来，在工作中也许会方便很多，下面主要介绍下几个常用的场景。">
+
+
+<meta itemprop="datePublished" content="2019-10-30T17:20:22&#43;08:00" />
+<meta itemprop="dateModified" content="2019-10-30T17:20:22&#43;08:00" />
+<meta itemprop="wordCount" content="714">
+
+
+
+<meta itemprop="keywords" content="MySQL," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL常用拼接语句"/>
+<meta name="twitter:description" content="前言：
+
+在MySQL中 CONCAT ()函数用于将多个字符串连接成一个字符串，利用此函数我们可以将原来一步无法得到的sql拼接出来，在工作中也许会方便很多，下面主要介绍下几个常用的场景。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">关于</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">关于</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">MySQL常用拼接语句</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-10-30 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 714 字 </span>
+          <span class="more-meta"> 预计阅读 2 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-拼接查询所有用户">1.拼接查询所有用户</a></li>
+<li><a href="#2-拼接drop-table">2.拼接DROP table</a></li>
+<li><a href="#3-拼接kill连接">3.拼接kill连接</a></li>
+<li><a href="#4-拼接创建数据库语句">4.拼接创建数据库语句</a></li>
+<li><a href="#5-拼接创建用户的语句">5.拼接创建用户的语句</a></li>
+<li><a href="#6-导出权限脚本-这个shell脚本也用到了拼接">6.导出权限脚本 这个shell脚本也用到了拼接</a></li>
+<li><a href="#7-查找表碎片">7.查找表碎片</a></li>
+<li><a href="#8-查找无主键表-这个没用到拼接-也分享出来吧">8.查找无主键表 这个没用到拼接 也分享出来吧</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p><strong>前言：</strong></p>
+
+<p>在MySQL中 CONCAT ()函数用于将多个字符串连接成一个字符串，利用此函数我们可以将原来一步无法得到的sql拼接出来，在工作中也许会方便很多，下面主要介绍下几个常用的场景。</p>
+
+<p>*注：*适用于5.7版本 低版本可能稍许不同。</p>
+
+<h5 id="1-拼接查询所有用户">1.拼接查询所有用户</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">SELECT</span> <span class="k">DISTINCT</span>
+	<span class="nf">CONCAT</span><span class="p">(</span>
+		<span class="s1">&#39;User: \&#39;&#39;,
+</span><span class="s1">		USER,
+</span><span class="s1">		&#39;</span><span class="err">\</span><span class="s1">&#39;@\&#39;&#39;,
+</span><span class="s1">		HOST,
+</span><span class="s1">		&#39;</span><span class="err">\</span><span class="s1">&#39;;&#39;</span>
+	<span class="p">)</span> <span class="k">AS</span> <span class="n">QUERY</span>
+<span class="k">FROM</span>
+	<span class="n">mysql</span><span class="p">.</span><span class="n">USER</span><span class="p">;</span>
+<span class="c1"># 当拼接字符串中出现&#39;时 需使用\转义符</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="2-拼接drop-table">2.拼接DROP table</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">SELECT</span>
+	<span class="nf">CONCAT</span><span class="p">(</span>
+		<span class="s1">&#39;DROP table &#39;</span><span class="p">,</span>
+		<span class="n">TABLE_NAME</span><span class="p">,</span>
+		<span class="s1">&#39;;&#39;</span>
+	<span class="p">)</span>
+<span class="k">FROM</span>
+	<span class="n">information_schema</span><span class="p">.</span> <span class="kp">TABLES</span>
+<span class="k">WHERE</span>
+	<span class="n">TABLE_SCHEMA</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="3-拼接kill连接">3.拼接kill连接</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">SELECT</span>
+	<span class="nf">concat</span><span class="p">(</span><span class="s1">&#39;KILL &#39;</span><span class="p">,</span> <span class="n">id</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">)</span>
+<span class="k">FROM</span>
+	<span class="n">information_schema</span><span class="p">.</span> <span class="n">PROCESSLIST</span>
+<span class="k">WHERE</span>
+	<span class="n">STATE</span> <span class="k">LIKE</span> <span class="s1">&#39;Creating sort index&#39;</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="4-拼接创建数据库语句">4.拼接创建数据库语句</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">SELECT</span>
+	<span class="nf">CONCAT</span><span class="p">(</span>
+		<span class="s1">&#39;create database &#39;</span><span class="p">,</span>
+		<span class="s1">&#39;`&#39;</span><span class="p">,</span>
+    <span class="n">SCHEMA_NAME</span><span class="p">,</span>
+    <span class="s1">&#39;`&#39;</span><span class="p">,</span>
+    <span class="s1">&#39; DEFAULT CHARACTER SET &#39;</span><span class="p">,</span>
+    <span class="n">DEFAULT_CHARACTER_SET_NAME</span><span class="p">,</span>
+		<span class="s1">&#39;;&#39;</span>
+	<span class="p">)</span> <span class="k">AS</span> <span class="n">CreateDatabaseQuery</span>
+<span class="k">FROM</span>
+	<span class="n">information_schema</span><span class="p">.</span><span class="n">SCHEMATA</span>
+<span class="k">WHERE</span>
+	<span class="n">SCHEMA_NAME</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span>
+		<span class="s1">&#39;information_schema&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;performance_schema&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;mysql&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;sys&#39;</span>
+	<span class="p">);</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="5-拼接创建用户的语句">5.拼接创建用户的语句</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">SELECT</span>
+	<span class="nf">CONCAT</span><span class="p">(</span>
+		<span class="s1">&#39;create user \&#39;&#39;,
+</span><span class="s1">    user,
+</span><span class="s1">    &#39;</span><span class="err">\</span><span class="s1">&#39;@\&#39;&#39;,
+</span><span class="s1">    Host,
+</span><span class="s1">    &#39;</span><span class="err">\</span><span class="s1">&#39;&#39;</span>
+    <span class="s1">&#39; IDENTIFIED BY PASSWORD \&#39;&#39;,
+</span><span class="s1">    authentication_string,
+</span><span class="s1">		&#39;</span><span class="err">\</span><span class="s1">&#39;;&#39;</span>
+	<span class="p">)</span> <span class="k">AS</span> <span class="n">CreateUserQuery</span>
+<span class="k">FROM</span>
+	<span class="n">mysql</span><span class="p">.</span><span class="o">`</span><span class="n">user</span><span class="o">`</span>
+<span class="k">WHERE</span>
+	<span class="o">`</span><span class="n">User</span><span class="o">`</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span>
+		<span class="s1">&#39;root&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;mysql.session&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;mysql.sys&#39;</span>
+	<span class="p">);</span>
+<span class="c1">#有密码字符串哦 在其他实例执行 可直接创建出与本实例相同密码的用户</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="6-导出权限脚本-这个shell脚本也用到了拼接">6.导出权限脚本 这个shell脚本也用到了拼接</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash  
+</span><span class="cp"></span><span class="c1">#Function export user privileges</span>  
+
+<span class="nv">pwd</span><span class="o">=</span>yourpass  
+expgrants<span class="o">()</span>  
+<span class="o">{</span>  
+  mysql -B -u<span class="s1">&#39;root&#39;</span> -p<span class="si">${</span><span class="nv">pwd</span><span class="si">}</span> -N <span class="nv">$@</span> -e <span class="s2">&#34;SELECT CONCAT(  &#39;SHOW GRANTS FOR &#39;&#39;&#39;, user, &#39;&#39;&#39;@&#39;&#39;&#39;, host, &#39;&#39;&#39;;&#39; ) AS query FROM mysql.user&#34;</span> <span class="p">|</span> <span class="se">\
+</span><span class="se"></span>  mysql -u<span class="s1">&#39;root&#39;</span> -p<span class="si">${</span><span class="nv">pwd</span><span class="si">}</span> <span class="nv">$@</span> <span class="p">|</span> <span class="se">\
+</span><span class="se"></span>  sed <span class="s1">&#39;s/\(GRANT .*\)/\1;/;s/^\(Grants for .*\)/-- \1 /;/--/{x;p;x;}&#39;</span>  
+<span class="o">}</span>  
+ 
+expgrants &gt; /tmp/grants.sql
+<span class="nb">echo</span> <span class="s2">&#34;flush privileges;&#34;</span> &gt;&gt; /tmp/grants.sql</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="7-查找表碎片">7.查找表碎片</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">SELECT</span> <span class="n">t</span><span class="p">.</span><span class="n">TABLE_SCHEMA</span><span class="p">,</span>
+       <span class="n">t</span><span class="p">.</span><span class="n">TABLE_NAME</span><span class="p">,</span>
+       <span class="n">t</span><span class="p">.</span><span class="n">TABLE_ROWS</span><span class="p">,</span>
+	   <span class="nf">concat</span><span class="p">(</span><span class="nf">round</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">DATA_LENGTH</span> <span class="o">/</span> <span class="mi">1024</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;M&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">size</span><span class="p">,</span>
+       <span class="n">t</span><span class="p">.</span><span class="n">INDEX_LENGTH</span><span class="p">,</span>
+       <span class="nf">concat</span><span class="p">(</span><span class="nf">round</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">DATA_FREE</span> <span class="o">/</span> <span class="mi">1024</span> <span class="o">/</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;M&#39;</span><span class="p">)</span> <span class="k">AS</span> <span class="n">datafree</span>
+<span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="kp">tables</span> <span class="n">t</span>
+<span class="k">WHERE</span> <span class="n">t</span><span class="p">.</span><span class="n">TABLE_SCHEMA</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span> <span class="k">order</span> <span class="k">by</span> <span class="n">DATA_LENGTH</span> <span class="k">desc</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="8-查找无主键表-这个没用到拼接-也分享出来吧">8.查找无主键表 这个没用到拼接 也分享出来吧</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="c1">#查找某一个库无主键表
+</span><span class="c1"></span><span class="k">SELECT</span>
+<span class="n">table_schema</span><span class="p">,</span>
+<span class="n">table_name</span>
+<span class="k">FROM</span>
+    <span class="n">information_schema</span><span class="p">.</span><span class="kp">TABLES</span>
+<span class="k">WHERE</span>
+    <span class="n">table_schema</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span>
+<span class="k">AND</span> <span class="n">TABLE_NAME</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span>
+    <span class="k">SELECT</span>
+        <span class="n">table_name</span>
+    <span class="k">FROM</span>
+        <span class="n">information_schema</span><span class="p">.</span><span class="n">table_constraints</span> <span class="n">t</span>
+    <span class="k">JOIN</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">key_column_usage</span> <span class="n">k</span> <span class="k">USING</span> <span class="p">(</span>
+        <span class="n">constraint_name</span><span class="p">,</span>
+        <span class="n">table_schema</span><span class="p">,</span>
+        <span class="n">table_name</span>
+    <span class="p">)</span>
+    <span class="k">WHERE</span>
+        <span class="n">t</span><span class="p">.</span><span class="n">constraint_type</span> <span class="o">=</span> <span class="s1">&#39;PRIMARY KEY&#39;</span>
+    <span class="k">AND</span> <span class="n">t</span><span class="p">.</span><span class="n">table_schema</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span>
+<span class="p">);</span>
+
+<span class="c1">#查找除系统库外 无主键表
+</span><span class="c1"></span><span class="k">SELECT</span>
+	<span class="n">t1</span><span class="p">.</span><span class="n">table_schema</span><span class="p">,</span>
+	<span class="n">t1</span><span class="p">.</span><span class="n">table_name</span>
+<span class="k">FROM</span>
+	<span class="n">information_schema</span><span class="p">.</span> <span class="kp">TABLES</span> <span class="n">t1</span>
+<span class="k">LEFT</span> <span class="k">OUTER</span> <span class="k">JOIN</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">TABLE_CONSTRAINTS</span> <span class="n">t2</span> <span class="k">ON</span> <span class="n">t1</span><span class="p">.</span><span class="n">table_schema</span> <span class="o">=</span> <span class="n">t2</span><span class="p">.</span><span class="n">TABLE_SCHEMA</span>
+<span class="k">AND</span> <span class="n">t1</span><span class="p">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">t2</span><span class="p">.</span><span class="n">TABLE_NAME</span>
+<span class="k">AND</span> <span class="n">t2</span><span class="p">.</span><span class="n">CONSTRAINT_NAME</span> <span class="k">IN</span> <span class="p">(</span><span class="s1">&#39;PRIMARY&#39;</span><span class="p">)</span>
+<span class="k">WHERE</span>
+	<span class="n">t2</span><span class="p">.</span><span class="n">table_name</span> <span class="k">IS</span> <span class="no">NULL</span>
+<span class="k">AND</span> <span class="n">t1</span><span class="p">.</span><span class="n">TABLE_SCHEMA</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span>
+	<span class="s1">&#39;information_schema&#39;</span><span class="p">,</span>
+	<span class="s1">&#39;performance_schema&#39;</span><span class="p">,</span>
+	<span class="s1">&#39;mysql&#39;</span><span class="p">,</span>
+	<span class="s1">&#39;sys&#39;</span>
+<span class="p">)</span> <span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>欢迎大家收藏，其他同学有没有类似实用的语句呢 也可以分享出来哦！</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-10-30
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/lower_case_table_names%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/">
+            <span class="next-text nav-default">Lower_case_table_names参数详解</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
