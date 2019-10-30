@@ -2,6 +2,55 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://wangkunk.github.io/categories/</loc>
+    <lastmod>2019-10-30T17:20:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/tags/mysql/</loc>
+    <lastmod>2019-10-30T17:20:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/</loc>
+    <lastmod>2019-10-30T17:20:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/post/mysql%E5%B8%B8%E7%94%A8%E6%8B%BC%E6%8E%A5%E8%AF%AD%E5%8F%A5/</loc>
+    <lastmod>2019-10-30T17:20:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/categories/mysql%E6%8A%80%E6%9C%AF/</loc>
+    <lastmod>2019-10-30T17:20:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/post/</loc>
+    <lastmod>2019-10-30T17:20:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/tags/</loc>
+    <lastmod>2019-10-30T17:20:22+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://wangkunk.github.io/about/</loc>
     <lastmod>2019-10-23T15:52:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -9,49 +58,7 @@
   </url>
   
   <url>
-    <loc>https://wangkunk.github.io/</loc>
-    <lastmod>2019-10-23T15:52:04+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/categories/</loc>
-    <lastmod>2019-10-23T15:25:58+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://wangkunk.github.io/post/lower_case_table_names%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/</loc>
-    <lastmod>2019-10-23T15:25:58+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/tags/mysql/</loc>
-    <lastmod>2019-10-23T15:25:58+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/categories/mysql%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2019-10-23T15:25:58+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/post/</loc>
-    <lastmod>2019-10-23T15:25:58+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/tags/</loc>
     <lastmod>2019-10-23T15:25:58+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

@@ -6,10 +6,21 @@
     <description>Recent content in MySQL技术 on MySQL Technology Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 23 Oct 2019 15:25:58 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 30 Oct 2019 17:20:22 +0800</lastBuildDate>
     
 	<atom:link href="https://wangkunk.github.io/categories/mysql%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>MySQL常用拼接语句</title>
+      <link>https://wangkunk.github.io/post/mysql%E5%B8%B8%E7%94%A8%E6%8B%BC%E6%8E%A5%E8%AF%AD%E5%8F%A5/</link>
+      <pubDate>Wed, 30 Oct 2019 17:20:22 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/post/mysql%E5%B8%B8%E7%94%A8%E6%8B%BC%E6%8E%A5%E8%AF%AD%E5%8F%A5/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;前言：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;在MySQL中 CONCAT ()函数用于将多个字符串连接成一个字符串，利用此函数我们可以将原来一步无法得到的sql拼接出来，在工作中也许会方便很多，下面主要介绍下几个常用的场景。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Lower_case_table_names参数详解</title>
