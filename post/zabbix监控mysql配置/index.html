@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Zabbix监控MySQL配置 - MySQL Technology Blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="前言：
+本文主要介绍zabbix监控MySQL配置流程。
+" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/zabbix%E7%9B%91%E6%8E%A7mysql%E9%85%8D%E7%BD%AE/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Zabbix监控MySQL配置" />
+<meta property="og:description" content="前言：
+
+本文主要介绍zabbix监控MySQL配置流程。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/zabbix%E7%9B%91%E6%8E%A7mysql%E9%85%8D%E7%BD%AE/" />
+<meta property="article:published_time" content="2019-11-01T17:14:52+08:00" />
+<meta property="article:modified_time" content="2019-11-01T17:14:52+08:00" />
+<meta itemprop="name" content="Zabbix监控MySQL配置">
+<meta itemprop="description" content="前言：
+
+本文主要介绍zabbix监控MySQL配置流程。">
+
+
+<meta itemprop="datePublished" content="2019-11-01T17:14:52&#43;08:00" />
+<meta itemprop="dateModified" content="2019-11-01T17:14:52&#43;08:00" />
+<meta itemprop="wordCount" content="583">
+
+
+
+<meta itemprop="keywords" content="MySQL,监控," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Zabbix监控MySQL配置"/>
+<meta name="twitter:description" content="前言：
+
+本文主要介绍zabbix监控MySQL配置流程。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">关于</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">关于</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Zabbix监控MySQL配置</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-11-01 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 583 字 </span>
+          <span class="more-meta"> 预计阅读 2 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-在mysql数据库中创建zabbix用户-用来获取数据">1.在mysql数据库中创建zabbix用户 用来获取数据</a></li>
+<li><a href="#2-更改zabbix配置文件">2.更改zabbix配置文件</a></li>
+<li><a href="#3-在-usr-local-etc目录下创建检查脚本">3.在/usr/local/etc目录下创建检查脚本</a></li>
+<li><a href="#4-赋予zabbix用户执行netstat的权限">4.赋予zabbix用户执行netstat的权限</a></li>
+<li><a href="#5-重启zabbix-agentd">5.重启zabbix_agentd</a></li>
+<li><a href="#6-进入zabbix-web-后台-添加template-app-mysql模板-之后再service端检查key">6.进入zabbix web 后台 添加Template App MySQL模板 之后再service端检查key</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p><strong>前言：</strong></p>
+
+<p>本文主要介绍zabbix监控MySQL配置流程。</p>
+
+<h5 id="1-在mysql数据库中创建zabbix用户-用来获取数据">1.在mysql数据库中创建zabbix用户 用来获取数据</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">GRANT</span> <span class="n">PROCESS</span><span class="p">,</span><span class="n">SUPER</span><span class="p">,</span><span class="n">REPLICATION</span> <span class="n">CLIENT</span> <span class="k">ON</span> <span class="o">*</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="n">zabbix</span><span class="o">@</span><span class="s1">&#39;%&#39;</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">&#39;yourpass&#39;</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="2-更改zabbix配置文件">2.更改zabbix配置文件</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">find / <span class="p">|</span>grep zabbix_agentd.conf
+/usr/local/etc/zabbix_agentd.conf.d
+/usr/local/etc/zabbix_agentd.conf <span class="c1">#配置文件</span>
+/usr/local/src/zabbix-3.2.3/conf/zabbix_agentd.conf   
+<span class="c1"># 添加mysql监控信息</span>
+vim /usr/local/etc/zabbix_agentd.conf
+<span class="nv">UserParameter</span><span class="o">=</span>mysql.version,mysql -V
+<span class="nv">UserParameter</span><span class="o">=</span>mysql.status<span class="o">[</span>*<span class="o">]</span>,/usr/local/etc/chk_mysql.sh <span class="nv">$1</span>
+<span class="nv">UserParameter</span><span class="o">=</span>mysql.ping,netstat -ntpl <span class="p">|</span>grep <span class="m">3306</span> <span class="p">|</span>grep mysql <span class="p">|</span>wc <span class="p">|</span>awk <span class="s1">&#39;{print $1}&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="3-在-usr-local-etc目录下创建检查脚本">3.在/usr/local/etc目录下创建检查脚本</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">vi chk_mysql.sh
+
+<span class="c1">#!/bin/sh</span>
+<span class="c1"># -------------------------------------------------------------------------------</span>
+<span class="c1"># FileName:    check_mysql.sh</span>
+<span class="c1"># Revision:    1.0</span>
+<span class="c1"># Date:        2016/04/22</span>
+<span class="c1"># Author:      tim</span>
+<span class="c1"># Email:       [mchdba@sohu.com](mailto:mchdba@sohu.com)</span>
+<span class="nv">MYSQL_SOCK</span><span class="o">=</span><span class="s2">&#34;/var/lib/mysql/mysql.sock&#34;</span>
+<span class="nv">MYSQL_USER</span><span class="o">=</span><span class="s1">&#39;zabbix&#39;</span>
+<span class="nb">export</span> <span class="nv">MYSQL_PWD</span><span class="o">=</span>yourpass
+<span class="nv">MYSQL_HOST</span><span class="o">=</span><span class="s1">&#39;192.168.6.230&#39;</span>
+<span class="nv">MYSQL_PORT</span><span class="o">=</span><span class="s1">&#39;3306&#39;</span>
+<span class="nv">ARGS</span><span class="o">=</span><span class="m">1</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> -ne <span class="s2">&#34;</span><span class="nv">$ARGS</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span><span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">&#34;Please input one arguement:&#34;</span>
+<span class="k">fi</span>
+<span class="k">case</span> <span class="nv">$1</span> in
+    Uptime<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> status<span class="p">|</span>cut -f2 -d<span class="s2">&#34;:&#34;</span><span class="p">|</span>cut -f1 -d<span class="s2">&#34;T&#34;</span><span class="sb">`</span>
+            <span class="nb">echo</span> <span class="nv">$result</span>
+            <span class="p">;;</span>
+        Com_update<span class="o">)</span>
+            <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Com_update&#34;</span><span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+            <span class="nb">echo</span> <span class="nv">$result</span>
+            <span class="p">;;</span>
+        Slow_queries<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> status <span class="p">|</span>cut -f5 -d<span class="s2">&#34;:&#34;</span><span class="p">|</span>cut -f1 -d<span class="s2">&#34;O&#34;</span><span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Com_select<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Com_select&#34;</span><span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Com_rollback<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Com_rollback&#34;</span><span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Questions<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> status<span class="p">|</span>cut -f4 -d<span class="s2">&#34;:&#34;</span><span class="p">|</span>cut -f1 -d<span class="s2">&#34;S&#34;</span><span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Com_insert<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Com_insert&#34;</span><span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Com_delete<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Com_delete&#34;</span><span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Com_commit<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Com_commit&#34;</span><span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Bytes_sent<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Bytes_sent&#34;</span> <span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Bytes_received<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Bytes_received&#34;</span> <span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+    Com_begin<span class="o">)</span>
+        <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>mysqladmin -u<span class="nv">$MYSQL_USER</span> -h<span class="nv">$MYSQL_HOST</span> -S <span class="nv">$MYSQL_SOCK</span> extended-status <span class="p">|</span>grep -w <span class="s2">&#34;Com_begin&#34;</span><span class="p">|</span>cut -d<span class="s2">&#34;|&#34;</span> -f3<span class="sb">`</span>
+                <span class="nb">echo</span> <span class="nv">$result</span>
+                <span class="p">;;</span>
+
+        *<span class="o">)</span>
+        <span class="nb">echo</span> <span class="s2">&#34;Usage:</span><span class="nv">$0</span><span class="s2">(Uptime|Com_update|Slow_queries|Com_select|Com_rollback|Questions)&#34;</span>
+        <span class="p">;;</span>
+<span class="k">esac</span>
+
+<span class="c1"># 更改脚本权限</span>
+chmod +x chk_mysql.sh
+chown  zabbix:zabbix chk_mysql.sh</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="4-赋予zabbix用户执行netstat的权限">4.赋予zabbix用户执行netstat的权限</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">chmod +s /bin/netstat</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="5-重启zabbix-agentd">5.重启zabbix_agentd</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">service zabbix_agentd stop
+service zabbix_agentd start</code></pre></td></tr></table>
+</div>
+</div>
+<h5 id="6-进入zabbix-web-后台-添加template-app-mysql模板-之后再service端检查key">6.进入zabbix web 后台 添加Template App MySQL模板 之后再service端检查key</h5>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">zabbix_get -s <span class="m">192</span>.168.6.230 -k mysql.ping
+zabbix_get -s <span class="m">192</span>.168.6.230 -k mysql.status<span class="o">[</span>Com_insert<span class="o">]</span></code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-11-01
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          <a href="/tags/%E7%9B%91%E6%8E%A7/">监控</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/mysql%E5%B8%B8%E7%94%A8%E6%8B%BC%E6%8E%A5%E8%AF%AD%E5%8F%A5/">
+            <span class="next-text nav-default">MySQL常用拼接语句</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
