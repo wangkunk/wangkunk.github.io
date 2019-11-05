@@ -56,7 +56,7 @@ MyFlash是由美团点评公司技术工程部开发维护的一个回滚DML操�
 
 <meta itemprop="datePublished" content="2019-11-05T16:21:59&#43;08:00" />
 <meta itemprop="dateModified" content="2019-11-05T16:21:59&#43;08:00" />
-<meta itemprop="wordCount" content="832">
+<meta itemprop="wordCount" content="821">
 
 
 
@@ -139,7 +139,7 @@ MyFlash是由美团点评公司技术工程部开发维护的一个回滚DML操�
         <div class="post-category">
             <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
             </div>
-          <span class="more-meta"> 约 832 字 </span>
+          <span class="more-meta"> 约 821 字 </span>
           <span class="more-meta"> 预计阅读 2 分钟 </span>
         <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
       </div>
@@ -178,49 +178,45 @@ MyFlash是由美团点评公司技术工程部开发维护的一个回滚DML操�
 <p>下面的这些参数是可以任意组合的。</p>
 
 <ul>
-<li>1.databaseNames</li>
+<li><p>1.databaseNames
+指定需要回滚的数据库名。多个数据库可以用“,”隔开。如果不指定该参数，相当于指定了所有数据库。</p></li>
+
+<li><p>2.tableNames
+指定需要回滚的表名。多个表可以用“,”隔开。如果不指定该参数，相当于指定了所有表。</p></li>
+
+<li><p>3.start-position
+指定回滚开始的位置。如不指定，从文件的开始处回滚。请指定正确的有效的位置，否则无法回滚</p></li>
+
+<li><p>4.stop-position
+指定回滚结束的位置。如不指定，回滚到文件结尾。请指定正确的有效的位置，否则无法回滚</p></li>
+
+<li><p>5.start-datetime
+指定回滚的开始时间。注意格式必须是 %Y-%m-%d %H:%M:%S。 如不指定，则不限定时间</p></li>
+
+<li><p>6.stop-datetime
+指定回滚的结束时间。注意格式必须是 %Y-%m-%d %H:%M:%S。 如不指定，则不限定时间</p></li>
+
+<li><p>7.sqlTypes
+指定需要回滚的sql类型。目前支持的过滤类型是INSERT, UPDATE ,DELETE。多个类型可以用“,”隔开。</p></li>
+
+<li><p>8.maxSplitSize
+一旦指定该参数，对文件进行固定尺寸的分割（单位为M），过滤条件有效，但不进行回滚操作。该参数主要用来将大的binlog文件切割，防止单次应用的binlog尺寸过大，对线上造成压力</p></li>
+
+<li><p>9.binlogFileNames
+指定需要回滚的binlog文件，目前只支持单个文件，后续会增加多个文件支持</p></li>
+
+<li><p>10.outBinlogFileNameBase
+指定输出的binlog文件前缀，如不指定，则默认为binlog_output_base.flashback</p></li>
+
+<li><p>11.logLevel
+仅供开发者使用，默认级别为error级别。在生产环境中不要修改这个级别，否则输出过多</p></li>
+
+<li><p>12.include-gtids
+指定需要回滚的gtid,支持gtid的单个和范围两种形式。</p></li>
+
+<li><p>13.exclude-gtids
+指定不需要回滚的gtid，用法同include-gtids</p></li>
 </ul>
-
-<p>指定需要回滚的数据库名。多个数据库可以用“,”隔开。如果不指定该参数，相当于指定了所有数据库。</p>
-
-<ul>
-<li>2.tableNames</li>
-</ul>
-
-<p>指定需要回滚的表名。多个表可以用“,”隔开。如果不指定该参数，相当于指定了所有表。
-- 3.start-position</p>
-
-<p>指定回滚开始的位置。如不指定，从文件的开始处回滚。请指定正确的有效的位置，否则无法回滚
-- 4.stop-position</p>
-
-<p>指定回滚结束的位置。如不指定，回滚到文件结尾。请指定正确的有效的位置，否则无法回滚
-- 5.start-datetime</p>
-
-<p>指定回滚的开始时间。注意格式必须是 %Y-%m-%d %H:%M:%S。 如不指定，则不限定时间
-- 6.stop-datetime</p>
-
-<p>指定回滚的结束时间。注意格式必须是 %Y-%m-%d %H:%M:%S。 如不指定，则不限定时间
-- 7.sqlTypes</p>
-
-<p>指定需要回滚的sql类型。目前支持的过滤类型是INSERT, UPDATE ,DELETE。多个类型可以用“,”隔开。
-- 8.maxSplitSize</p>
-
-<p>一旦指定该参数，对文件进行固定尺寸的分割（单位为M），过滤条件有效，但不进行回滚操作。该参数主要用来将大的binlog文件切割，防止单次应用的binlog尺寸过大，对线上造成压力
-- 9.binlogFileNames</p>
-
-<p>指定需要回滚的binlog文件，目前只支持单个文件，后续会增加多个文件支持
-- 10.outBinlogFileNameBase</p>
-
-<p>指定输出的binlog文件前缀，如不指定，则默认为binlog_output_base.flashback
-- 11.logLevel</p>
-
-<p>仅供开发者使用，默认级别为error级别。在生产环境中不要修改这个级别，否则输出过多
-- 12.include-gtids</p>
-
-<p>指定需要回滚的gtid,支持gtid的单个和范围两种形式。
-- 13.exclude-gtids</p>
-
-<p>指定不需要回滚的gtid，用法同include-gtids</p>
 
 <p>测试：</p>
 <div class="highlight"><div class="chroma">
