@@ -3,55 +3,69 @@
   
   <url>
     <loc>https://wangkunk.github.io/tags/binlog/</loc>
-    <lastmod>2019-11-05T16:11:03+08:00</lastmod>
+    <lastmod>2019-11-05T16:30:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://wangkunk.github.io/categories/</loc>
-    <lastmod>2019-11-05T16:11:03+08:00</lastmod>
+    <lastmod>2019-11-05T16:30:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://wangkunk.github.io/tags/mysql/</loc>
-    <lastmod>2019-11-05T16:11:03+08:00</lastmod>
+    <lastmod>2019-11-05T16:30:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://wangkunk.github.io/</loc>
-    <lastmod>2019-11-05T16:11:03+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/post/mysqlbinlog%E7%9B%B8%E5%85%B3%E7%AE%80%E4%BB%8B/</loc>
-    <lastmod>2019-11-05T16:11:03+08:00</lastmod>
+    <lastmod>2019-11-05T16:30:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://wangkunk.github.io/categories/mysql%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2019-11-05T16:11:03+08:00</lastmod>
+    <lastmod>2019-11-05T16:30:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://wangkunk.github.io/post/</loc>
-    <lastmod>2019-11-05T16:11:03+08:00</lastmod>
+    <lastmod>2019-11-05T16:30:04+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://wangkunk.github.io/tags/</loc>
+    <lastmod>2019-11-05T16:30:04+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/post/%E5%A6%82%E4%BD%95%E7%94%A8shell%E8%84%9A%E6%9C%AC%E9%97%AA%E5%9B%9Ebinlog%E5%91%A2/</loc>
+    <lastmod>2019-11-05T16:30:04+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/post/myflash%E5%9B%9E%E6%BB%9Abinlog/</loc>
+    <lastmod>2019-11-05T16:21:59+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/post/mysqlbinlog%E7%9B%B8%E5%85%B3%E7%AE%80%E4%BB%8B/</loc>
     <lastmod>2019-11-05T16:11:03+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

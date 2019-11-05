@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>如何用shell脚本闪回binlog呢 - MySQL Technology Blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="简介：
+上篇文章笔者介绍了如何用开源工具来闪回binlog，但有时候我们的机器无法安装这些开源工具。这时候我们可以使用shell脚本来闪回binlog，是不是觉得方便多了。
+" /><meta name="keywords" content="Hugo, theme, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/%E5%A6%82%E4%BD%95%E7%94%A8shell%E8%84%9A%E6%9C%AC%E9%97%AA%E5%9B%9Ebinlog%E5%91%A2/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="如何用shell脚本闪回binlog呢" />
+<meta property="og:description" content="简介：
+
+上篇文章笔者介绍了如何用开源工具来闪回binlog，但有时候我们的机器无法安装这些开源工具。这时候我们可以使用shell脚本来闪回binlog，是不是觉得方便多了。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/%E5%A6%82%E4%BD%95%E7%94%A8shell%E8%84%9A%E6%9C%AC%E9%97%AA%E5%9B%9Ebinlog%E5%91%A2/" />
+<meta property="article:published_time" content="2019-11-05T16:30:04+08:00" />
+<meta property="article:modified_time" content="2019-11-05T16:30:04+08:00" />
+<meta itemprop="name" content="如何用shell脚本闪回binlog呢">
+<meta itemprop="description" content="简介：
+
+上篇文章笔者介绍了如何用开源工具来闪回binlog，但有时候我们的机器无法安装这些开源工具。这时候我们可以使用shell脚本来闪回binlog，是不是觉得方便多了。">
+
+
+<meta itemprop="datePublished" content="2019-11-05T16:30:04&#43;08:00" />
+<meta itemprop="dateModified" content="2019-11-05T16:30:04&#43;08:00" />
+<meta itemprop="wordCount" content="1192">
+
+
+
+<meta itemprop="keywords" content="MySQL,binlog," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="如何用shell脚本闪回binlog呢"/>
+<meta name="twitter:description" content="简介：
+
+上篇文章笔者介绍了如何用开源工具来闪回binlog，但有时候我们的机器无法安装这些开源工具。这时候我们可以使用shell脚本来闪回binlog，是不是觉得方便多了。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">关于</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">关于</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">如何用shell脚本闪回binlog呢</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-11-05 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 1192 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-shell脚本闪回">1.shell脚本闪回：</a></li>
+<li><a href="#2-利用mysqlbinlog-back-py-脚本">2.利用mysqlbinlog_back.py 脚本：</a></li>
+<li><a href="#3-利用myflash工具">3.利用MyFlash工具：</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p><strong>简介：</strong></p>
+
+<p>上篇文章笔者介绍了如何用开源工具来闪回binlog，但有时候我们的机器无法安装这些开源工具。这时候我们可以使用shell脚本来闪回binlog，是不是觉得方便多了。</p>
+
+<p><strong>条件：</strong></p>
+
+<ul>
+<li>1.mysql binlog必须存在且是row格式的</li>
+<li>2.反向生成的表必须有主键</li>
+<li>3.表结构不能有更改</li>
+</ul>
+
+<h4 id="1-shell脚本闪回">1.shell脚本闪回：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 脚本 del_time_recovery.sh（根据起止 time恢复）用于回滚delete操作：</span>
+
+<span class="c1">#!/bin/bash</span>
+<span class="c1"># File Name   : del_time_recovery.sh</span>
+<span class="c1"># Author      : wang</span>
+<span class="c1"># Description : delete recover according to starttime and endtime.</span>
+Usage<span class="o">()</span> <span class="o">{</span>
+cat <span class="s">&lt;&lt; EOF
+</span><span class="s">mysql_delete_recovery
+</span><span class="s">OPTIONS:
+</span><span class="s">   -b      binlog name
+</span><span class="s">   -s      starttime
+</span><span class="s">   -e      endtime
+</span><span class="s">   -d      database name
+</span><span class="s">   -t      table name
+</span><span class="s">For secrity: This scripts check the full need arguments
+</span><span class="s">EOF</span>
+<span class="o">}</span>
+<span class="k">while</span> <span class="nb">getopts</span> <span class="s2">&#34;🅱️s:e:d:t:&#34;</span> opt<span class="p">;</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="nv">$opt</span> in
+    b<span class="o">)</span>
+      <span class="nv">logname</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+    s<span class="o">)</span>
+      <span class="nv">starttime</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+    e<span class="o">)</span>
+      <span class="nv">endtime</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+    d<span class="o">)</span>
+      <span class="nv">db</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+    t<span class="o">)</span>
+      <span class="nv">table</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+    <span class="se">\?</span><span class="o">)</span>
+      <span class="nb">echo</span> <span class="s2">&#34;Invalid option: -</span><span class="nv">$OPTARG</span><span class="s2">&#34;</span> &gt;<span class="p">&amp;</span><span class="m">2</span>
+      <span class="nb">exit</span> <span class="m">1</span>
+      <span class="p">;;</span>
+    :<span class="o">)</span>
+      <span class="nb">echo</span> <span class="s2">&#34;Option -</span><span class="nv">$OPTARG</span><span class="s2"> requires an argument.&#34;</span> &gt;<span class="p">&amp;</span><span class="m">2</span>
+      Usage
+      <span class="nb">exit</span> <span class="m">1</span>
+      <span class="p">;;</span>
+  <span class="k">esac</span>
+<span class="k">done</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> !<span class="o">=</span> <span class="m">10</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+    Usage
+    <span class="nb">exit</span> <span class="m">1</span><span class="p">;</span>
+<span class="k">fi</span>
+<span class="nv">PATH</span><span class="o">=</span>$<span class="o">[</span>PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin:/usr/local/mysql/bin<span class="o">](</span>http://path/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin:/usr/local/mysql/bin<span class="o">)</span>
+<span class="nb">export</span> PATH
+
+<span class="nv">user</span><span class="o">=</span>root
+<span class="nv">pwd</span><span class="o">=</span><span class="s1">&#39;xxxxxxxx&#39;</span>
+<span class="nv">tmpfile</span><span class="o">=</span>/tmp/del_recovery_<span class="nv">$table</span>.sql
+mysqlbinlog --no-defaults -vv --base64-output<span class="o">=</span>DECODE-ROWS --start-datetime<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$starttime</span><span class="s2">&#34;</span> --stop-datetime<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$endtime</span><span class="s2">&#34;</span> <span class="nv">$logname</span> <span class="p">|</span>sed -n <span class="s1">&#39;/### DELETE FROM `&#39;</span><span class="si">${</span><span class="nv">db</span><span class="si">}</span><span class="s1">&#39;`.`&#39;</span><span class="si">${</span><span class="nv">table</span><span class="si">}</span><span class="s1">&#39;`/,/COMMIT/p&#39;</span> <span class="p">|</span> <span class="se">\
+</span><span class="se"></span>sed -n <span class="s1">&#39;/###/p&#39;</span>    <span class="p">|</span> <span class="se">\
+</span><span class="se"></span>sed <span class="s1">&#39;s/### //g;s/\/\*.*/,/g;s/DELETE FROM/INSERT INTO/g;s/WHERE/SELECT/g;&#39;</span>   &gt; <span class="nv">$tmpfile</span>
+<span class="nv">n</span><span class="o">=</span><span class="m">0</span><span class="p">;</span>
+<span class="k">for</span> i in <span class="sb">`</span>mysql -u<span class="nv">$user</span> -p<span class="nv">$pwd</span> --skip-column-names --silent -e <span class="s2">&#34;desc </span><span class="nv">$db</span><span class="s2">.</span><span class="nv">$table</span><span class="s2">&#34;</span> <span class="p">|</span>awk <span class="s1">&#39;$0=$1&#39;</span><span class="sb">`</span><span class="p">;</span>
+<span class="k">do</span>
+        <span class="o">((</span>n++<span class="o">))</span><span class="p">;</span>
+<span class="k">done</span>
+sed -i -r <span class="s2">&#34;s/(@</span><span class="nv">$n</span><span class="s2">.*),/\1;/g&#34;</span> <span class="nv">$tmpfile</span>
+sed -i <span class="s1">&#39;s/@[1-9].*=//g&#39;</span> <span class="nv">$tmpfile</span>
+sed -i <span class="s1">&#39;s/@[1-9][0-9]=//g&#39;</span> <span class="nv">$tmpfile</span>
+
+<span class="c1"># 用法：-b -s  -e -d -t 分别带别binlog名字 开始的time 结束的time 库名 表名，</span>
+<span class="c1"># 直接使用  sh del_time_recovery.sh -b /mysqllog/mysql-bin.000005 -s &#34;2017-11-02 19:10:00&#34; -e &#34;2017-11-02 19:20:00&#34; -d test_db -t test_tb 即可调用</span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 脚本 update_time_recovery.sh（根据起止 time恢复）用于回滚update操作：</span>
+
+<span class="c1">#!/bin/bash</span>
+<span class="c1"># File Name   : update_time_recovery.sh</span>
+<span class="c1"># Author      : wang</span>
+<span class="c1"># Description : update recover according to starttime and endtime.</span>
+Usage<span class="o">()</span> <span class="o">{</span>
+cat <span class="s">&lt;&lt; EOF
+</span><span class="s">mysql_update_recovery
+</span><span class="s">OPTIONS:
+</span><span class="s">   -b      binlog name
+</span><span class="s">   -s      starttime
+</span><span class="s">   -e      endtime
+</span><span class="s">   -d      database name
+</span><span class="s">   -t      table name
+</span><span class="s">For secrity: This scripts check the full need arguments
+</span><span class="s">EOF</span>
+<span class="o">}</span>
+<span class="k">while</span> <span class="nb">getopts</span> <span class="s2">&#34;🅱️s:e:d:t:&#34;</span> opt<span class="p">;</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="nv">$opt</span> in
+    b<span class="o">)</span>
+      <span class="nv">logname</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+    s<span class="o">)</span>
+      <span class="nv">starttime</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+         
+    e<span class="o">)</span>
+      <span class="nv">endtime</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+         
+    d<span class="o">)</span>
+      <span class="nv">db</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+    t<span class="o">)</span>
+      <span class="nv">table</span><span class="o">=</span><span class="si">${</span><span class="nv">OPTARG</span><span class="si">}</span>
+      <span class="p">;;</span>
+    <span class="se">\?</span><span class="o">)</span>
+      <span class="nb">echo</span> <span class="s2">&#34;Invalid option: -</span><span class="nv">$OPTARG</span><span class="s2">&#34;</span> &gt;<span class="p">&amp;</span><span class="m">2</span>
+      <span class="nb">exit</span> <span class="m">1</span>
+      <span class="p">;;</span>
+    :<span class="o">)</span>
+      <span class="nb">echo</span> <span class="s2">&#34;Option -</span><span class="nv">$OPTARG</span><span class="s2"> requires an argument.&#34;</span> &gt;<span class="p">&amp;</span><span class="m">2</span>
+      Usage
+      <span class="nb">exit</span> <span class="m">1</span>
+      <span class="p">;;</span>
+  <span class="k">esac</span>
+<span class="k">done</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> !<span class="o">=</span> <span class="m">10</span> <span class="o">]</span> <span class="p">;</span> <span class="k">then</span>
+    Usage
+    <span class="nb">exit</span> <span class="m">1</span><span class="p">;</span>
+<span class="k">fi</span>
+<span class="nv">user</span><span class="o">=</span>root
+<span class="nv">pwd</span><span class="o">=</span><span class="s1">&#39;xxxxxxx&#39;</span>
+<span class="nv">tmpfile</span><span class="o">=</span>/tmp/update_recovery_<span class="nv">$table</span>.sql
+<span class="nv">n</span><span class="o">=</span><span class="m">0</span><span class="p">;</span>
+<span class="k">for</span> i in <span class="sb">`</span>mysql -u<span class="nv">$user</span> -p<span class="nv">$pwd</span> --skip-column-names --silent -e <span class="s2">&#34;desc </span><span class="nv">$db</span><span class="s2">.</span><span class="nv">$table</span><span class="s2">&#34;</span> <span class="p">|</span>awk <span class="s1">&#39;$0=$1&#39;</span><span class="sb">`</span><span class="p">;</span>
+<span class="k">do</span>
+        <span class="o">((</span>n++<span class="o">))</span><span class="p">;</span>
+<span class="k">done</span>
+mysqlbinlog --no-defaults -vv --base64-output<span class="o">=</span>DECODE-ROWS --start-datetime<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$starttime</span><span class="s2">&#34;</span> --stop-datetime<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$endtime</span><span class="s2">&#34;</span> <span class="nv">$logname</span> <span class="p">|</span>sed -n <span class="s1">&#39;/### UPDATE `&#39;</span><span class="si">${</span><span class="nv">db</span><span class="si">}</span><span class="s1">&#39;`.`&#39;</span><span class="si">${</span><span class="nv">table</span><span class="si">}</span><span class="s1">&#39;`/,/COMMIT/p&#39;</span>          <span class="se">\
+</span><span class="se"></span><span class="p">|</span>       sed <span class="s1">&#39;/WHERE/{:a;N;/SET/!ba;s/\([^\n]*\)\n\(.*\)\n\(.*\)/\3\n\2\n\1/}&#39;</span>                                                   <span class="se">\
+</span><span class="se"></span><span class="p">|</span>       sed -r <span class="s1">&#39;/WHERE/{:a;N;/@&#39;</span><span class="s2">&#34;</span><span class="nv">$n</span><span class="s2">&#34;</span><span class="s1">&#39;/!ba;s/###   @2.*//g}&#39;</span>                                                                          <span class="se">\
+</span><span class="se"></span><span class="p">|</span>       sed <span class="s1">&#39;s/### //g;s/\/\*.*/,/g&#39;</span>                                                                                            <span class="se">\
+</span><span class="se"></span><span class="p">|</span>       sed <span class="s1">&#39;/WHERE/{:a;N;/@1/!ba;s/,/;/g};s/#.*//g;s/COMMIT,//g&#39;</span>                                                               <span class="se">\
+</span><span class="se"></span><span class="p">|</span>       sed <span class="s1">&#39;/^$/d&#39;</span>     &gt; <span class="nv">$tmpfile</span>
+<span class="nv">n</span><span class="o">=</span><span class="m">0</span><span class="p">;</span>
+<span class="k">for</span> i in <span class="sb">`</span>mysql -u<span class="nv">$user</span> -p<span class="nv">$pwd</span> --skip-column-names --silent -e <span class="s2">&#34;desc </span><span class="nv">$db</span><span class="s2">.</span><span class="nv">$table</span><span class="s2">&#34;</span> <span class="p">|</span>awk <span class="s1">&#39;$0=$1&#39;</span><span class="sb">`</span><span class="p">;</span>
+<span class="k">do</span>
+        <span class="o">((</span>n++<span class="o">))</span><span class="p">;</span>
+          sed -i <span class="s2">&#34;s/@</span><span class="nv">$n</span><span class="s2">\b/</span><span class="nv">$i</span><span class="s2">/g&#34;</span> <span class="nv">$tmpfile</span>
+<span class="k">done</span>
+sed -i -r <span class="s2">&#34;s/(</span><span class="nv">$i</span><span class="s2">=.*),/\1/g&#34;</span> <span class="nv">$tmpfile</span>
+
+<span class="c1"># 用法：-b -s  -e -d -t 分别带别binlog名字 开始的time 结束的time 库名 表名，</span>
+<span class="c1"># 直接使用  sh update_time_recovery.sh -b /mysqllog/mysql-bin.000005 -s &#34;2017-11-03 14:30:00&#34; -e &#34;2017-11-03 15:00:00&#34; -d test_db -t test_tb 即可调用</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>注意： 使用前请仔细阅读shell脚本哦 可能在你的环境下要稍微改动下。如果想基于position进行闪回 可以自行修改下脚本 也是可以实现的。当然与开源工具相比 功能并不是那么齐全 不过临时用下也是极好的。</p>
+
+<h4 id="2-利用mysqlbinlog-back-py-脚本">2.利用mysqlbinlog_back.py 脚本：</h4>
+
+<p>项目地址：<a href="https://github.com/58daojia-dba/mysqlbinlog_flashback">https://github.com/58daojia-dba/mysqlbinlog_flashback</a></p>
+
+<h4 id="3-利用myflash工具">3.利用MyFlash工具：</h4>
+
+<p>项目地址：<a href="https://github.com/Meituan-Dianping/MyFlash">https://github.com/Meituan-Dianping/MyFlash</a></p>
+
+<p>网上还有很多类似的开源项目 如：binlog2sql等 都可以参考下。</p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-11-05
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          <a href="/tags/binlog/">binlog</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/myflash%E5%9B%9E%E6%BB%9Abinlog/">
+            <span class="next-text nav-default">MyFlash回滚binlog</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

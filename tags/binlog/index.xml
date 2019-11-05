@@ -6,10 +6,32 @@
     <description>Recent content in binlog on MySQL Technology Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 05 Nov 2019 16:11:03 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 05 Nov 2019 16:30:04 +0800</lastBuildDate>
     
 	<atom:link href="https://wangkunk.github.io/tags/binlog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>如何用shell脚本闪回binlog呢</title>
+      <link>https://wangkunk.github.io/post/%E5%A6%82%E4%BD%95%E7%94%A8shell%E8%84%9A%E6%9C%AC%E9%97%AA%E5%9B%9Ebinlog%E5%91%A2/</link>
+      <pubDate>Tue, 05 Nov 2019 16:30:04 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/post/%E5%A6%82%E4%BD%95%E7%94%A8shell%E8%84%9A%E6%9C%AC%E9%97%AA%E5%9B%9Ebinlog%E5%91%A2/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;简介：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;上篇文章笔者介绍了如何用开源工具来闪回binlog，但有时候我们的机器无法安装这些开源工具。这时候我们可以使用shell脚本来闪回binlog，是不是觉得方便多了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>MyFlash回滚binlog</title>
+      <link>https://wangkunk.github.io/post/myflash%E5%9B%9E%E6%BB%9Abinlog/</link>
+      <pubDate>Tue, 05 Nov 2019 16:21:59 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/post/myflash%E5%9B%9E%E6%BB%9Abinlog/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;简介：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;MyFlash是由美团点评公司技术工程部开发维护的一个回滚DML操作的工具。该工具通过解析v4版本的binlog，完成回滚操作。相对已有的回滚工具，其增加了更多的过滤选项，让回滚更加容易。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>Mysqlbinlog相关简介</title>
