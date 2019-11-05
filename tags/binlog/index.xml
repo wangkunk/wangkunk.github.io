@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>binlog on MySQL Technology Blog</title>
+    <link>https://wangkunk.github.io/tags/binlog/</link>
+    <description>Recent content in binlog on MySQL Technology Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 05 Nov 2019 16:11:03 +0800</lastBuildDate>
+    
+	<atom:link href="https://wangkunk.github.io/tags/binlog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Mysqlbinlog相关简介</title>
+      <link>https://wangkunk.github.io/post/mysqlbinlog%E7%9B%B8%E5%85%B3%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Tue, 05 Nov 2019 16:11:03 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/post/mysqlbinlog%E7%9B%B8%E5%85%B3%E7%AE%80%E4%BB%8B/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;binlog简介：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;二进制日志，记录对数据发生或潜在发生更改的SQL语句，并以二进制的形式保存在磁盘中。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,15 +6,24 @@
     <description>Recent content in Tags on MySQL Technology Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 01 Nov 2019 17:14:52 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 05 Nov 2019 16:11:03 +0800</lastBuildDate>
     
 	<atom:link href="https://wangkunk.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>binlog</title>
+      <link>https://wangkunk.github.io/tags/binlog/</link>
+      <pubDate>Tue, 05 Nov 2019 16:11:03 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/tags/binlog/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>MySQL</title>
       <link>https://wangkunk.github.io/tags/mysql/</link>
-      <pubDate>Fri, 01 Nov 2019 17:14:52 +0800</pubDate>
+      <pubDate>Tue, 05 Nov 2019 16:11:03 +0800</pubDate>
       
       <guid>https://wangkunk.github.io/tags/mysql/</guid>
       <description></description>
