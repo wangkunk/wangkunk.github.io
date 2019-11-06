@@ -18,7 +18,7 @@
 
 <meta name="author" content="Simon" /><meta name="description" content="简介：
 上篇文章笔者介绍了如何用开源工具来闪回binlog，但有时候我们的机器无法安装这些开源工具。这时候我们可以使用shell脚本来闪回binlog，是不是觉得方便多了。
-" /><meta name="keywords" content="Hugo, theme, even" />
+" /><meta name="keywords" content="MySQL, hugo, even" />
 
 
 
@@ -534,6 +534,21 @@ sed -i -r <span class="s2">&#34;s/(</span><span class="nv">$i</span><span class=
         
 
   
+  <div id="vcomments"></div>
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script type="text/javascript">
+    new Valine({
+        el: '#vcomments' ,
+        appId: '2FYPsiQzkbpY4KgD0fet6BK5-gzGzoHsz',
+        appKey: 'cKuSQfbvRod8NNOLovpubxJo',
+        notify:  false ,
+        verify:  false ,
+        avatar:'mm',
+        placeholder: '说点什么吧...',
+        visitor:  false 
+    });
+  </script>
 
   
 
