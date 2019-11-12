@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>MGR集群相关简介 - MySQL Technology Blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="1.MGR简介  MySQL Group Replication（MGR）是MySQL官方在5.7.17版本引进的一个数据库高可用与高扩展的解决方案，以插件形式提供。MGR基于分布式paxos协议，实现组复制，保证数据一致性。内置故障检测和自动选主功能，只要不是集群中的大多数节点都宕机，就可以继续正常工作。提供单主模式与多主模式，多主模式支持多点写入。
+" /><meta name="keywords" content="MySQL, hugo, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/mgr%E9%9B%86%E7%BE%A4%E7%9B%B8%E5%85%B3%E7%AE%80%E4%BB%8B/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="MGR集群相关简介" />
+<meta property="og:description" content="1.MGR简介
+
+
+MySQL Group Replication（MGR）是MySQL官方在5.7.17版本引进的一个数据库高可用与高扩展的解决方案，以插件形式提供。MGR基于分布式paxos协议，实现组复制，保证数据一致性。内置故障检测和自动选主功能，只要不是集群中的大多数节点都宕机，就可以继续正常工作。提供单主模式与多主模式，多主模式支持多点写入。
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/mgr%E9%9B%86%E7%BE%A4%E7%9B%B8%E5%85%B3%E7%AE%80%E4%BB%8B/" />
+<meta property="article:published_time" content="2019-11-12T18:09:46+08:00" />
+<meta property="article:modified_time" content="2019-11-12T18:09:46+08:00" />
+<meta itemprop="name" content="MGR集群相关简介">
+<meta itemprop="description" content="1.MGR简介
+
+
+MySQL Group Replication（MGR）是MySQL官方在5.7.17版本引进的一个数据库高可用与高扩展的解决方案，以插件形式提供。MGR基于分布式paxos协议，实现组复制，保证数据一致性。内置故障检测和自动选主功能，只要不是集群中的大多数节点都宕机，就可以继续正常工作。提供单主模式与多主模式，多主模式支持多点写入。
+">
+
+
+<meta itemprop="datePublished" content="2019-11-12T18:09:46&#43;08:00" />
+<meta itemprop="dateModified" content="2019-11-12T18:09:46&#43;08:00" />
+<meta itemprop="wordCount" content="1401">
+
+
+
+<meta itemprop="keywords" content="MySQL,MGR," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MGR集群相关简介"/>
+<meta name="twitter:description" content="1.MGR简介
+
+
+MySQL Group Replication（MGR）是MySQL官方在5.7.17版本引进的一个数据库高可用与高扩展的解决方案，以插件形式提供。MGR基于分布式paxos协议，实现组复制，保证数据一致性。内置故障检测和自动选主功能，只要不是集群中的大多数节点都宕机，就可以继续正常工作。提供单主模式与多主模式，多主模式支持多点写入。
+"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">关于</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">关于</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">MGR集群相关简介</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-11-12 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 1401 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-mgr简介">1.MGR简介</a></li>
+<li><a href="#2-原理简单介绍">2.原理简单介绍</a></li>
+<li><a href="#3-使用限制">3.使用限制</a>
+<ul>
+<li><a href="#3-1-仅支持innodb引擎">3.1 仅支持innodb引擎</a></li>
+<li><a href="#3-2-主键">3.2 主键</a></li>
+<li><a href="#3-3-隔离级别">3.3 隔离级别</a></li>
+<li><a href="#3-4-外键">3.4 外键</a></li>
+</ul></li>
+<li><a href="#4-参数规范">4.参数规范</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <h4 id="1-mgr简介">1.MGR简介</h4>
+
+<blockquote>
+<p>MySQL Group Replication（MGR）是MySQL官方在5.7.17版本引进的一个数据库高可用与高扩展的解决方案，以插件形式提供。MGR基于分布式paxos协议，实现组复制，保证数据一致性。内置故障检测和自动选主功能，只要不是集群中的大多数节点都宕机，就可以继续正常工作。提供单主模式与多主模式，多主模式支持多点写入。</p>
+</blockquote>
+
+<h4 id="2-原理简单介绍">2.原理简单介绍</h4>
+
+<p>组复制是一种可用于实现容错系统的技术。复制组是一个通过消息传递相互交互的Server集群。复制组由多个Server成员组成，如下图的Master1、Master2、Master3，所有成员独立完成各自的事务。</p>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/11096896-f800f3fcbc8eaddd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240#align=left&amp;display=inline&amp;height=319&amp;originHeight=339&amp;originWidth=794&amp;status=done&amp;width=746" alt="" /></p>
+
+<p>当客户端发起一个更新事务时，该事务先在本地执行，执行完成之后就要发起对事务的提交操作。在还没有真正提交之前，需要将产生的复制写集广播出去，复制到其它成员。如果冲突检测成功，组内决定该事务可以提交，其它成员可以应用，否则就回滚。</p>
+
+<p>最终，所有组内成员以相同的顺序接收同一组事务。因此组内成员以相同的顺序应用相同的修改，保证组内数据强一致性。</p>
+
+<h4 id="3-使用限制">3.使用限制</h4>
+
+<h5 id="3-1-仅支持innodb引擎">3.1 仅支持innodb引擎</h5>
+
+<p>为什么需要使用innodb引擎呢？在MySQL Group Replication中，事务以乐观形式执行，但是在提交时检查冲突，如果存在冲突，则会在某些实例上回滚事务，保持各个实例的数据一致性，那么，这就需要使用到 事务存储引擎，同事Innodb提供一些额外的功能，可以更好的管理和处理冲突，所以建议 业务使用表格使用inndb存储引擎，类似于系统表格mysql.user使用MyISAM引擎的表格，因为极少修改及添加，极少出现冲突情况。</p>
+
+<h5 id="3-2-主键">3.2 主键</h5>
+
+<p>每个需要复制的表格都必须定义一个显式主键，注意跟隐式主键区分（使用Innodb引擎的表格，如果没有指定主键，默认选择第一个非空的唯一索引作为主键，如果没有，则自动创建一个6个字节的rowid隐式主键）。这个主键能在冲突发生时启动极其重要的作用，同时，能够有效提高relay log的执行效率。</p>
+
+<h5 id="3-3-隔离级别">3.3 隔离级别</h5>
+
+<p>官网建议使用READ COMMITTED级别，除非应用程序依赖于REPLEATABLE READ，RC模式下没有GAP LOCK，比较好支持Innodb本身的冲突检测机制何组复制的内部分布式检测机制一起协同工作。不支持SERIALIZABLE隔离级别。</p>
+
+<h5 id="3-4-外键">3.4 外键</h5>
+
+<p>不建议使用级联外键，如果旧库本身有外键，业务上无法去除并且使用的是多主模式，那么，请配置 group_replication_enforce_update_everywhere_check ，强制检查每个组成员的级联检查，避免多主模式下执行级联操作造成的检测不到的冲突。</p>
+
+<h4 id="4-参数规范">4.参数规范</h4>
+
+<blockquote>
+<p>为防止开发，测试，生产等环境间数据库参数不同 对程序运行有一定的影响。建议创建实例进行参数规范化 更方便管理 。
+下面简单解释下几个改动的参数</p>
+</blockquote>
+
+<ul>
+<li><code>sql_mode</code>  去除了ONLY_FULL_GROUP_BY, STRICT_TRANS_TABLES, NO_ZERO_IN_DATE, NO_ZERO_DATE等限制 采取了较为宽松的模式</li>
+<li><code>lower_case_table_names</code>  统一设置为1 即不区分大小写 有些实例还没更改 大家建表建库的时候不要大写</li>
+<li><code>character-set-server</code> 统一设置为utf8 不要用latin1字符集</li>
+<li><code>wait_timeout</code>和<code>interactive_timeout</code>参数控制空闲连接的时长 当连接空闲时间超过此参数则会被断开 以后会统一设置为1800s即30分钟</li>
+<li><code>transaction_isolation</code> 事务隔离级别 MySQL官方默认是可重复读（repeatable-read）目前单实例及主从架构的mysql采用了此级别，MGR集群将采取读已提交（read-committed）级别。Oracle默认是读已提交 。</li>
+</ul>
+
+<p><img src="https://cdn.nlark.com/yuque/0/2019/jpeg/119537/1572603112848-ab4c590a-8485-420a-8c68-fdbc7f1c44c3.jpeg" alt="gong8.jpg" /></p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-11-12
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          <a href="/tags/mgr/">MGR</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/mysql%E5%AE%A1%E8%AE%A1%E6%93%8D%E4%BD%9C%E8%AE%B0%E5%BD%95/">
+            <span class="next-text nav-default">MySQL审计操作记录</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+  <div id="vcomments"></div>
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script type="text/javascript">
+    new Valine({
+        el: '#vcomments' ,
+        appId: '2FYPsiQzkbpY4KgD0fet6BK5-gzGzoHsz',
+        appKey: 'cKuSQfbvRod8NNOLovpubxJo',
+        notify:  false ,
+        verify:  false ,
+        avatar:'mm',
+        placeholder: '说点什么吧...',
+        visitor:  false 
+    });
+  </script>
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
