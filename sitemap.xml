@@ -3,7 +3,49 @@
   
   <url>
     <loc>https://wangkunk.github.io/categories/</loc>
-    <lastmod>2019-11-12T18:09:46+08:00</lastmod>
+    <lastmod>2019-11-18T15:21:38+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/tags/mysql/</loc>
+    <lastmod>2019-11-18T15:21:38+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/</loc>
+    <lastmod>2019-11-18T15:21:38+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/categories/mysql%E6%8A%80%E6%9C%AF/</loc>
+    <lastmod>2019-11-18T15:21:38+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/post/mysql%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2019-11-18T15:21:38+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/post/</loc>
+    <lastmod>2019-11-18T15:21:38+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://wangkunk.github.io/tags/</loc>
+    <lastmod>2019-11-18T15:21:38+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -17,41 +59,6 @@
   
   <url>
     <loc>https://wangkunk.github.io/post/mgr%E9%9B%86%E7%BE%A4%E7%9B%B8%E5%85%B3%E7%AE%80%E4%BB%8B/</loc>
-    <lastmod>2019-11-12T18:09:46+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/tags/mysql/</loc>
-    <lastmod>2019-11-12T18:09:46+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/</loc>
-    <lastmod>2019-11-12T18:09:46+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/categories/mysql%E6%8A%80%E6%9C%AF/</loc>
-    <lastmod>2019-11-12T18:09:46+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/post/</loc>
-    <lastmod>2019-11-12T18:09:46+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://wangkunk.github.io/tags/</loc>
     <lastmod>2019-11-12T18:09:46+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

@@ -6,10 +6,21 @@
     <description>Recent content in Posts on MySQL Technology Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 12 Nov 2019 18:09:46 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 18 Nov 2019 15:21:38 +0800</lastBuildDate>
     
 	<atom:link href="https://wangkunk.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>MySQL线程状态详解</title>
+      <link>https://wangkunk.github.io/post/mysql%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81%E8%AF%A6%E8%A7%A3/</link>
+      <pubDate>Mon, 18 Nov 2019 15:21:38 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/post/mysql%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81%E8%AF%A6%E8%A7%A3/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;前言：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;我们常用 &lt;code&gt;show processlist&lt;/code&gt; 或 &lt;code&gt;show full processlist&lt;/code&gt; 查看数据库连接状态，其中比较关注的是 State 列，此列表示该连接此刻所在的状态。那么你真的了解不同 State 值所表示的状态吗？下面我们参考官方文档来一探究竟 。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>MGR集群相关简介</title>
