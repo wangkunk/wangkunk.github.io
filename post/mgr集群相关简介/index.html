@@ -189,7 +189,7 @@ MySQL Group Replication（MGR）是MySQL官方在5.7.17版本引进的一个数�
 
 <p>组复制是一种可用于实现容错系统的技术。复制组是一个通过消息传递相互交互的Server集群。复制组由多个Server成员组成，如下图的Master1、Master2、Master3，所有成员独立完成各自的事务。</p>
 
-<p><img src="https://upload-images.jianshu.io/upload_images/11096896-f800f3fcbc8eaddd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240#align=left&amp;display=inline&amp;height=319&amp;originHeight=339&amp;originWidth=794&amp;status=done&amp;width=746" alt="" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11096896-f800f3fcbc8eaddd.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="mgr.jpg" /></p>
 
 <p>当客户端发起一个更新事务时，该事务先在本地执行，执行完成之后就要发起对事务的提交操作。在还没有真正提交之前，需要将产生的复制写集广播出去，复制到其它成员。如果冲突检测成功，组内决定该事务可以提交，其它成员可以应用，否则就回滚。</p>
 
@@ -228,7 +228,7 @@ MySQL Group Replication（MGR）是MySQL官方在5.7.17版本引进的一个数�
 <li><code>transaction_isolation</code> 事务隔离级别 MySQL官方默认是可重复读（repeatable-read）目前单实例及主从架构的mysql采用了此级别，MGR集群将采取读已提交（read-committed）级别。Oracle默认是读已提交 。</li>
 </ul>
 
-<p><img src="https://cdn.nlark.com/yuque/0/2019/jpeg/119537/1572603112848-ab4c590a-8485-420a-8c68-fdbc7f1c44c3.jpeg" alt="gong8.jpg" /></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/11096896-ee767e678493ed1a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="gong8.jpg" /></p>
     </div>
 
     <div class="post-copyright">
