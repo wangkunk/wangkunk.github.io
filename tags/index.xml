@@ -6,7 +6,7 @@
     <description>Recent content in Tags on MySQL Technology Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 18 Nov 2019 15:21:38 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 22 Nov 2019 17:39:58 +0800</lastBuildDate>
     
 	<atom:link href="https://wangkunk.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>MySQL</title>
       <link>https://wangkunk.github.io/tags/mysql/</link>
-      <pubDate>Mon, 18 Nov 2019 15:21:38 +0800</pubDate>
+      <pubDate>Fri, 22 Nov 2019 17:39:58 +0800</pubDate>
       
       <guid>https://wangkunk.github.io/tags/mysql/</guid>
       <description></description>
@@ -23,7 +23,7 @@
     <item>
       <title>MGR</title>
       <link>https://wangkunk.github.io/tags/mgr/</link>
-      <pubDate>Tue, 12 Nov 2019 18:09:46 +0800</pubDate>
+      <pubDate>Fri, 22 Nov 2019 17:39:41 +0800</pubDate>
       
       <guid>https://wangkunk.github.io/tags/mgr/</guid>
       <description></description>
