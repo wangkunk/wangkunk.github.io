@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>关于自增id你可能还不知道 - MySQL Technology Blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content=" 导读：在使用MySQL建表时，我们通常会创建一个自增字段(AUTO_INCREMENT)，并以此字段作为主键。本篇文章将以问答的形式讲述关于自增id的一切。
+ 注： 本文所讲的都是基于Innodb存储引擎。
+" /><meta name="keywords" content="MySQL, hugo, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/%E5%85%B3%E4%BA%8E%E8%87%AA%E5%A2%9Eid%E4%BD%A0%E5%8F%AF%E8%83%BD%E8%BF%98%E4%B8%8D%E7%9F%A5%E9%81%93/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="关于自增id你可能还不知道" />
+<meta property="og:description" content="
+导读：在使用MySQL建表时，我们通常会创建一个自增字段(AUTO_INCREMENT)，并以此字段作为主键。本篇文章将以问答的形式讲述关于自增id的一切。
+
+
+注： 本文所讲的都是基于Innodb存储引擎。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/%E5%85%B3%E4%BA%8E%E8%87%AA%E5%A2%9Eid%E4%BD%A0%E5%8F%AF%E8%83%BD%E8%BF%98%E4%B8%8D%E7%9F%A5%E9%81%93/" />
+<meta property="article:published_time" content="2019-11-27T17:17:05+08:00" />
+<meta property="article:modified_time" content="2019-11-27T17:17:05+08:00" />
+<meta itemprop="name" content="关于自增id你可能还不知道">
+<meta itemprop="description" content="
+导读：在使用MySQL建表时，我们通常会创建一个自增字段(AUTO_INCREMENT)，并以此字段作为主键。本篇文章将以问答的形式讲述关于自增id的一切。
+
+
+注： 本文所讲的都是基于Innodb存储引擎。">
+
+
+<meta itemprop="datePublished" content="2019-11-27T17:17:05&#43;08:00" />
+<meta itemprop="dateModified" content="2019-11-27T17:17:05&#43;08:00" />
+<meta itemprop="wordCount" content="1678">
+
+
+
+<meta itemprop="keywords" content="MySQL," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="关于自增id你可能还不知道"/>
+<meta name="twitter:description" content="
+导读：在使用MySQL建表时，我们通常会创建一个自增字段(AUTO_INCREMENT)，并以此字段作为主键。本篇文章将以问答的形式讲述关于自增id的一切。
+
+
+注： 本文所讲的都是基于Innodb存储引擎。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">关于</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">关于</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">关于自增id你可能还不知道</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-11-27 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 1678 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-mysql为什么建议将自增列id设为主键">1.MySQL为什么建议将自增列id设为主键？</a></li>
+<li><a href="#2-自增列id一定是连续的吗">2.自增列id一定是连续的吗？</a></li>
+<li><a href="#3-自增id有上限吗">3.自增id有上限吗？</a></li>
+<li><a href="#4-关于自增列-我们该怎么维护">4.关于自增列 我们该怎么维护？</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <blockquote>
+<p>导读：在使用MySQL建表时，我们通常会创建一个自增字段(AUTO_INCREMENT)，并以此字段作为主键。本篇文章将以问答的形式讲述关于自增id的一切。</p>
+</blockquote>
+
+<p><em>注：</em> 本文所讲的都是基于Innodb存储引擎。</p>
+
+<h5 id="1-mysql为什么建议将自增列id设为主键">1.MySQL为什么建议将自增列id设为主键？</h5>
+
+<ul>
+<li><p>如果我们定义了主键(PRIMARY KEY)，那么InnoDB会选择主键作为聚集索引、如果没有显式定义主键，则InnoDB会选择第一个不包含有NULL值的唯一索引作为主键索引、如果也没有这样的唯一索引，则InnoDB会选择内置6字节长的ROWID作为隐含的聚集索引(ROWID随着行记录的写入而主键递增，这个ROWID不像ORACLE的ROWID那样可引用，是隐含的)。</p></li>
+
+<li><p>数据记录本身被存于主索引（一颗B+Tree）的叶子节点上。这就要求同一个叶子节点内（大小为一个内存页或磁盘页）的各条数据记录按主键顺序存放，因此每当有一条新的记录插入时，MySQL会根据其主键将其插入适当的节点和位置，如果页面达到装载因子（InnoDB默认为15/16），则开辟一个新的页（节点）</p></li>
+
+<li><p>如果表使用自增主键，那么每次插入新的记录，记录就会顺序添加到当前索引节点的后续位置，当一页写满，就会自动开辟一个新的页</p></li>
+
+<li><p>如果使用非自增主键（如果身份证号或学号等），由于每次插入主键的值近似于随机，因此每次新纪录都要被插到现有索引页得中间某个位置，此时MySQL不得不为了将新记录插到合适位置而移动数据，甚至目标页面可能已经被回写到磁盘上而从缓存中清掉，此时又要从磁盘上读回来，这增加了很多开销，同时频繁的移动、分页操作造成了大量的碎片，得到了不够紧凑的索引结构，后续不得不通过OPTIMIZE TABLE来重建表并优化填充页面。</p></li>
+</ul>
+
+<p>综上而言：当我们使用自增列作为主键时，存取效率是最高的。</p>
+
+<h5 id="2-自增列id一定是连续的吗">2.自增列id一定是连续的吗？</h5>
+
+<p>自增id是增长的 不一定连续。</p>
+
+<p>我们先来看下MySQL 对自增值的保存策略：</p>
+
+<blockquote>
+<p>InnoDB 引擎的自增值，其实是保存在了内存里，并且到了 MySQL 8.0 版本后，才有了“自增值持久化”的能力，也就是才实现了“如果发生重启，表的自增值可以恢复为 MySQL 重启前的值”，具体情况是：</p>
+
+<p>在 MySQL 5.7 及之前的版本，自增值保存在内存里，并没有持久化。每次重启后，第一次打开表的时候，都会去找自增值的最大值 max(id)，然后将 max(id)+1 作为这个表当前的自增值。﻿</p>
+
+<p>举例来说，如果一个表当前数据行里最大的 id 是 10，AUTO_INCREMENT=11。这时候，我们删除 id=10 的行，AUTO_INCREMENT 还是 11。但如果马上重启实例，重启后这个表的 AUTO_INCREMENT 就会变成 10。﻿</p>
+
+<p>也就是说，MySQL 重启可能会修改一个表的 AUTO_INCREMENT 的值。</p>
+
+<p>在 MySQL 8.0 版本，将自增值的变更记录在了 redo log 中，重启的时候依靠 redo log 恢复重启之前的值。</p>
+</blockquote>
+
+<p>造成自增id不连续的情况可能有：</p>
+
+<ul>
+<li>1.唯一键冲突</li>
+<li>2.事务回滚</li>
+<li>3.insert &hellip; select语句批量申请自增id</li>
+</ul>
+
+<h5 id="3-自增id有上限吗">3.自增id有上限吗？</h5>
+
+<p>自增id是整型字段，我们常用int类型来定义增长id，而int类型有上限 即增长id也是有上限的。</p>
+
+<p>下表列举下 <code>int</code> 与 <code>bigint</code> 字段类型的范围：</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="center">大小</th>
+<th align="center">范围（有符号）</th>
+<th align="center">范围（无符号）</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center">int</td>
+<td align="center">4字节</td>
+<td align="center">(-2147483648,2147483647)</td>
+<td align="center">(0,4294967295)</td>
+</tr>
+
+<tr>
+<td align="center">bigint</td>
+<td align="center">8字节</td>
+<td align="center">(-9223372036854775808,9223372036854775807)</td>
+<td align="center">(0,18446744073709551615)</td>
+</tr>
+</tbody>
+</table>
+
+<p>从上表可以看出：当自增字段使用int有符号类型时，最大可达2147483647即21亿多；使用int无符号类型时，最大可达4294967295即42亿多。当然bigint能表示的范围更大。</p>
+
+<p>下面我们测试下当自增id达到最大时再次插入数据会怎么样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">create</span> <span class="k">table</span> <span class="nf">t</span><span class="p">(</span><span class="n">id</span> <span class="kt">int</span> <span class="k">unsigned</span> <span class="kp">auto_increment</span> <span class="k">primary</span> <span class="k">key</span><span class="p">)</span> <span class="kp">auto_increment</span><span class="o">=</span><span class="mi">4294967295</span><span class="p">;</span>
+<span class="k">insert</span> <span class="k">into</span> <span class="n">t</span> <span class="k">values</span><span class="p">(</span><span class="no">null</span><span class="p">);</span>
+<span class="o">//</span> <span class="err">成功插入一行</span> <span class="mi">4294967295</span>
+<span class="k">show</span> <span class="k">create</span> <span class="k">table</span> <span class="n">t</span><span class="p">;</span>
+<span class="cm">/* CREATE TABLE `t` (
+</span><span class="cm">`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+</span><span class="cm">PRIMARY KEY (`id`)
+</span><span class="cm">) ENGINE=InnoDB AUTO_INCREMENT=4294967295;
+</span><span class="cm">*/</span>
+
+<span class="k">insert</span> <span class="k">into</span> <span class="n">t</span> <span class="k">values</span><span class="p">(</span><span class="no">null</span><span class="p">);</span>
+<span class="o">//</span><span class="n">Duplicate</span> <span class="n">entry</span> <span class="s1">&#39;4294967295&#39;</span> <span class="k">for</span> <span class="k">key</span> <span class="s1">&#39;PRIMARY&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>从实验可以看出，当自增id达到最大时将无法扩展，第一个 insert 语句插入数据成功后，这个表的AUTO_INCREMENT 没有改变（还是 4294967295），就导致了第二个 insert 语句又拿到相同的自增 id 值，再试图执行插入语句，报主键冲突错误。</p>
+
+<h5 id="4-关于自增列-我们该怎么维护">4.关于自增列 我们该怎么维护？</h5>
+
+<p>维护方面主要提供以下2点建议：</p>
+
+<ul>
+<li>1.字段类型选择方面：推荐使用int无符号类型，若可预测该表数据量将非常大 可改用bigint无符号类型。</li>
+<li>2.多关注大表的自增值，防止发生主键溢出情况。</li>
+</ul>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/11096896-4a55fd822a8a1436.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="WX.png" /></p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-11-27
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F%E4%BB%8B%E7%BB%8D/">
+            <span class="next-text nav-default">外键约束介绍</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+  <div id="vcomments"></div>
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script type="text/javascript">
+    new Valine({
+        el: '#vcomments' ,
+        appId: '2FYPsiQzkbpY4KgD0fet6BK5-gzGzoHsz',
+        appKey: 'cKuSQfbvRod8NNOLovpubxJo',
+        notify:  false ,
+        verify:  false ,
+        avatar:'mm',
+        placeholder: '说点什么吧...',
+        visitor:  false 
+    });
+  </script>
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
