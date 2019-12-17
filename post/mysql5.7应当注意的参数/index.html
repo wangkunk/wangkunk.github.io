@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>MySQL5 - MySQL Technology Blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="简介：
+本篇文章主要介绍 MySQL 初始化应当注意的参数，对于不同环境间实例迁移，这些参数同样应当注意。
+注： 本文介绍的参数都是在配置文件 [mysqld] 部分。
+" /><meta name="keywords" content="MySQL, hugo, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/mysql5.7%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E7%9A%84%E5%8F%82%E6%95%B0/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="MySQL5" />
+<meta property="og:description" content="简介：
+
+本篇文章主要介绍 MySQL 初始化应当注意的参数，对于不同环境间实例迁移，这些参数同样应当注意。
+
+注： 本文介绍的参数都是在配置文件 [mysqld] 部分。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/mysql5.7%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E7%9A%84%E5%8F%82%E6%95%B0/" />
+<meta property="article:published_time" content="2019-12-17T17:13:49+08:00" />
+<meta property="article:modified_time" content="2019-12-17T17:13:49+08:00" />
+<meta itemprop="name" content="MySQL5">
+<meta itemprop="description" content="简介：
+
+本篇文章主要介绍 MySQL 初始化应当注意的参数，对于不同环境间实例迁移，这些参数同样应当注意。
+
+注： 本文介绍的参数都是在配置文件 [mysqld] 部分。">
+
+
+<meta itemprop="datePublished" content="2019-12-17T17:13:49&#43;08:00" />
+<meta itemprop="dateModified" content="2019-12-17T17:13:49&#43;08:00" />
+<meta itemprop="wordCount" content="1825">
+
+
+
+<meta itemprop="keywords" content="MySQL," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL5"/>
+<meta name="twitter:description" content="简介：
+
+本篇文章主要介绍 MySQL 初始化应当注意的参数，对于不同环境间实例迁移，这些参数同样应当注意。
+
+注： 本文介绍的参数都是在配置文件 [mysqld] 部分。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">关于</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">关于</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">MySQL5</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-12-17 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 1825 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#server-id-和-log-bin-binlog-format"><code>server_id</code> 和 <code>log_bin</code> ，<code>binlog_format</code></a></li>
+<li><a href="#sql-mode"><code>sql_mode</code></a></li>
+<li><a href="#max-connections"><code>max_connections</code></a></li>
+<li><a href="#character-set-server"><code>character_set_server</code></a></li>
+<li><a href="#lower-case-table-names"><code>lower_case_table_names</code></a></li>
+<li><a href="#transaction-isolation"><code>transaction_isolation</code></a></li>
+<li><a href="#innodb-buffer-pool-size"><code>innodb_buffer_pool_size</code></a></li>
+<li><a href="#innodb-log-file-size"><code>innodb_log_file_size</code></a></li>
+<li><a href="#innodb-io-capacity-和-innodb-io-capacity-max"><code>innodb_io_capacity</code> 和 <code>innodb_io_capacity_max</code></a></li>
+<li><a href="#其他相关参数">其他相关参数</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p><strong>简介：</strong></p>
+
+<p>本篇文章主要介绍 MySQL 初始化应当注意的参数，对于不同环境间实例迁移，这些参数同样应当注意。</p>
+
+<p><em>注：</em> 本文介绍的参数都是在配置文件 [mysqld] 部分。</p>
+
+<h4 id="server-id-和-log-bin-binlog-format"><code>server_id</code> 和 <code>log_bin</code> ，<code>binlog_format</code></h4>
+
+<p>这几个系统变量通常成对出现，当我们想指定<code>log_bin</code> 选项时，必须也要指定<code>server_id</code> 。</p>
+
+<p><code>log_bin</code> 是全局变量 不可动态修改 默认为OFF。当我们需要开启binlog时，可将该参数设为binlog名字或绝对路径加名字。</p>
+
+<p><code>binlog_format</code> 指定binlog格式 5.7.7版本以上默认是ROW模式</p>
+
+<p>建议设置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="c1">#server_id 各个实例建议设置不同 log_bin不指定路径时默认在数据文件目录
+</span><span class="c1"></span><span class="n">server_id</span> <span class="o">=</span> <span class="mi">213306</span>
+<span class="n">log_bin</span> <span class="o">=</span> <span class="n">mysqlbin</span>
+<span class="n">binlog_format</span> <span class="o">=</span> <span class="n">row</span>
+<span class="err">或者</span>
+<span class="n">server_id</span> <span class="o">=</span> <span class="mi">213306</span>
+<span class="n">log_bin</span> <span class="o">=</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">mysql</span><span class="o">/</span><span class="n">logs</span><span class="o">/</span><span class="n">mysqlbin</span>
+<span class="n">binlog_format</span> <span class="o">=</span> <span class="n">row</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="sql-mode"><code>sql_mode</code></h4>
+
+<p>该参数控制 MySQL server 在不同的SQL模式下运行，对于客户端发送的请求不同的模式会有不同的应答。</p>
+
+<p><code>sql_mode</code> 参数分为全局和会话级别 可以动态修改</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="c1">#sql_mode 默认为：
+</span><span class="c1"></span><span class="n">sql_mode</span> <span class="o">=</span> <span class="n">ONLY_FULL_GROUP_BY</span><span class="p">,</span><span class="n">STRICT_TRANS_TABLES</span><span class="p">,</span><span class="n">NO_ZERO_IN_DATE</span><span class="p">,</span><span class="n">NO_ZERO_DATE</span><span class="p">,</span><span class="n">ERROR_FOR_DIVISION_BY_ZERO</span><span class="p">,</span><span class="n">NO_AUTO_CREATE_USER</span><span class="p">,</span><span class="n">NO_ENGINE_SUBSTITUTION</span>
+<span class="c1">#关于修改和各个模式的作用 可参考官方文档：
+</span><span class="c1"></span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">dev</span><span class="p">.</span><span class="n">mysql</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">doc</span><span class="o">/</span><span class="n">refman</span><span class="o">/</span><span class="mi">5</span><span class="p">.</span><span class="mi">7</span><span class="o">/</span><span class="n">en</span><span class="o">/</span><span class="k">sql</span><span class="o">-</span><span class="n">mode</span><span class="p">.</span><span class="n">html</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>该参数建议去掉ONLY_FULL_GROUP_BY，具体采用严格或非严格模式可以根据需求来修改。注意该参数在不同实例要保持一致，不然可能会出现一条sql在此环境下可以执行 在另外一个环境不能执行的情况。</p>
+
+<h4 id="max-connections"><code>max_connections</code></h4>
+
+<p>该参数指定 MySQL 的最大连接数，是全局变量 可动态修改 默认为151。建议设置大些 防止出现连接数用满的错误。</p>
+
+<h4 id="character-set-server"><code>character_set_server</code></h4>
+
+<p>该参数指定 MySQL server端字符集，分为全局和会话级别 可以动态修改 5.7版本默认值为latin1。</p>
+
+<p>建议设置该参数为utf8或utf8mb4，不同实例间保持一致 特别是主从实例。</p>
+
+<h4 id="lower-case-table-names"><code>lower_case_table_names</code></h4>
+
+<p>该参数控制 MySQL 是否大小写敏感，主要影响库名及表名。</p>
+
+<p>Linux下该参数默认为0 即对大小写敏感，是全局变量 不可动态修改，建议设置为1。</p>
+
+<h4 id="transaction-isolation"><code>transaction_isolation</code></h4>
+
+<p>该参数指定 MySQL server 采用哪种事务隔离级别，默认是REPEATABLE-READ 可动态修改。</p>
+
+<p>采用哪种隔离级别要根据应用要求来选择，一般可改为READ-COMMITTED，不同实例间建议保持一致。</p>
+
+<h4 id="innodb-buffer-pool-size"><code>innodb_buffer_pool_size</code></h4>
+
+<p>该参数控制InnoDB缓冲池大小，默认值为134217728字节（128MB）5.7.5版本以上可动态修改。</p>
+
+<p>缓冲池是缓存数据和索引的地方，尽可能大的缓存池将确保使用内存而不是磁盘来进行大多数读取操作。典型值为5-6GB（8GB RAM），20-25GB（32GB RAM），100-120GB（128GB RAM），在一个独立使用的数据库服务器上,你可以设置这个变量到服务器物理内存大小的80%。</p>
+
+<h4 id="innodb-log-file-size"><code>innodb_log_file_size</code></h4>
+
+<p>该参数定义redo日志组中每个日志文件的大小（以字节为单位）,是全局变量 不可动态修改 默认为48M。</p>
+
+<p>当MySQL server 读写比较频繁时，建议增大该参数 可与 <code>innodb_log_files_in_group</code> 参数配合使用。</p>
+
+<h4 id="innodb-io-capacity-和-innodb-io-capacity-max"><code>innodb_io_capacity</code> 和 <code>innodb_io_capacity_max</code></h4>
+
+<p><code>innodb_io_capacity</code>参数设置InnoDB后台任务每秒执行的IO操作数的上限，默认值为200 可动态修改。</p>
+
+<p>此参数应设置为系统每秒大约可执行的IO操作数 即系统的IOPS。该值取决于你的系统配置。</p>
+
+<p>当MySQL server 写操作特多 刷新脏页落后时 ， <code>innodb_io_capacity_max</code> 参数是后台任务定义每秒执行的IO操作数的上限，innodb_io_capacity_max通常设置为innodb_io_capacity的2倍。</p>
+
+<p>如果MySQL服务器是SSD高速磁盘，我们可以设置 innodb_io_capacity_max= 6000  和 innodb_io_capacity = 3000  （最大值的50％）。当然 运行sysbench或任何其他基准测试工具来对磁盘吞吐量进行基准测试是个好主意。</p>
+
+<h4 id="其他相关参数">其他相关参数</h4>
+
+<p>除了上面列举的参数 还有些其他参数需要注意 ，篇幅关系 我将其汇总如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="c1">#禁用所有DNS解析 建议开启 唯一的限制是GRANT语句必须仅使用IP地址
+</span><span class="c1"></span><span class="n">skip_name_resolve</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">#MySQL server关闭空闲连接等待的秒数 默认为28800
+</span><span class="c1"></span><span class="n">interactive_timeout</span> <span class="o">=</span> <span class="err">？</span>  
+<span class="n">wait_timeout</span> <span class="o">=</span> <span class="err">？</span>
+<span class="c1">#日志记录时间与系统保持一致
+</span><span class="c1"></span><span class="n">log_timestamps</span> <span class="o">=</span> <span class="n">SYSTEM</span>
+<span class="c1">#一些日志相关参数
+</span><span class="c1"></span><span class="n">log_error</span> <span class="o">=</span> <span class="n">error</span><span class="p">.</span><span class="n">log</span>
+<span class="n">slow_query_log</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">slow_query_log_file</span> <span class="o">=</span> <span class="n">slow</span><span class="p">.</span><span class="n">log</span>
+<span class="n">long_query_time</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1">#binlog日志删除策略 单位为天 默认为0 及不自动清理
+</span><span class="c1"></span><span class="n">expire_logs_days</span> <span class="o">=</span> <span class="mi">30</span> 
+<span class="c1">#允许master创建function并同步到slave，有潜在的数据安全问题
+</span><span class="c1"></span><span class="n">log_bin_trust_function_creators</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">#导出文件安全目录 默认为空
+</span><span class="c1"></span><span class="n">secure_file_priv</span> <span class="o">=</span> <span class="o">/</span><span class="n">tmp</span></code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>总结：</strong></p>
+
+<p>本篇文章介绍了部分MySQL初始化应当注意的参数，给出了相关参数的默认值及是否可动态修改。对于不可动态修改的参数 建议启动前设置合理，这样可以减少后面维护重启次数。</p>
+
+<p>在大家修改参数之前 请记住以下几点：</p>
+
+<blockquote>
+<ul>
+<li>一次更改一个设置！这是估计变更是否有益的唯一方法。</li>
+<li>不允许在配置文件中进行重复设置。如果要跟踪更改，请使用版本控制。</li>
+<li>更改前应该在测试环境演练。</li>
+<li>确保参数位置正确，单位合理，不和其他参数冲突。</li>
+<li>不要做天真的数学运算，比如“我的新服务器有2x内存，我只需要将所有值设置为以前的2倍”。</li>
+</ul>
+</blockquote>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/11096896-4a55fd822a8a1436.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="WX.png" /></p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-12-17
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/explicit_defaults_for_timestamp%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Explicit_defaults_for_timestamp参数详解</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%85%B3%E4%BA%8E%E8%87%AA%E5%A2%9Eid%E4%BD%A0%E5%8F%AF%E8%83%BD%E8%BF%98%E4%B8%8D%E7%9F%A5%E9%81%93/">
+            <span class="next-text nav-default">关于自增id你可能还不知道</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+  <div id="vcomments"></div>
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script type="text/javascript">
+    new Valine({
+        el: '#vcomments' ,
+        appId: '2FYPsiQzkbpY4KgD0fet6BK5-gzGzoHsz',
+        appKey: 'cKuSQfbvRod8NNOLovpubxJo',
+        notify:  false ,
+        verify:  false ,
+        avatar:'mm',
+        placeholder: '说点什么吧...',
+        visitor:  false 
+    });
+  </script>
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>

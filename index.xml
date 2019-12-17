@@ -6,10 +6,33 @@
     <description>Recent content on MySQL Technology Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 27 Nov 2019 17:17:05 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 17 Dec 2019 17:14:43 +0800</lastBuildDate>
     
 	<atom:link href="https://wangkunk.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Explicit_defaults_for_timestamp参数详解</title>
+      <link>https://wangkunk.github.io/post/explicit_defaults_for_timestamp%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/</link>
+      <pubDate>Tue, 17 Dec 2019 17:14:43 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/post/explicit_defaults_for_timestamp%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;简介：&lt;/strong&gt;
+&lt;code&gt;explicit_defaults_for_timestamp&lt;/code&gt; 系统变量决定MySQL服务端对timestamp列中的默认值和&lt;code&gt;NULL&lt;/code&gt;值的不同处理方法。此变量自MySQL 5.6.6 版本引入，分为全局级别和会话级别，可动态更新，默认值为OFF。本文主要介绍该参数打开和关闭情况下对timestamp的影响 。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>MySQL5</title>
+      <link>https://wangkunk.github.io/post/mysql5.7%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E7%9A%84%E5%8F%82%E6%95%B0/</link>
+      <pubDate>Tue, 17 Dec 2019 17:13:49 +0800</pubDate>
+      
+      <guid>https://wangkunk.github.io/post/mysql5.7%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E7%9A%84%E5%8F%82%E6%95%B0/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;简介：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;本篇文章主要介绍 MySQL 初始化应当注意的参数，对于不同环境间实例迁移，这些参数同样应当注意。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;注：&lt;/em&gt; 本文介绍的参数都是在配置文件 [mysqld] 部分。&lt;/p&gt;</description>
+    </item>
     
     <item>
       <title>关于自增id你可能还不知道</title>

@@ -45,7 +45,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wangkunk.github.io/" />
 
-<meta property="og:updated_time" content="2019-11-27T17:17:05+08:00" />
+<meta property="og:updated_time" content="2019-12-17T17:14:43+08:00" />
 <meta itemprop="name" content="MySQL Technology Blog">
 <meta itemprop="description" content="MySQL Technology Blog">
 
@@ -116,6 +116,57 @@
       <div class="content-wrapper">
         <div id="content" class="content">
           <section id="posts" class="posts">
+    <article class="post">
+  <header class="post-header">
+    <h1 class="post-title"><a class="post-link" href="/post/explicit_defaults_for_timestamp%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/">Explicit_defaults_for_timestamp参数详解</a></h1>
+    <div class="post-meta">
+      <span class="post-time"> 2019-12-17 </span>
+      <div class="post-category">
+          <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+          </div>
+        <span class="more-meta"> 约 2396 字 </span>
+        <span class="more-meta"> 预计阅读 5 分钟 </span>
+    </div>
+  </header>
+  
+  <div class="post-content">
+    <div class="post-summary">
+      <p><strong>简介：</strong>
+<code>explicit_defaults_for_timestamp</code> 系统变量决定MySQL服务端对timestamp列中的默认值和<code>NULL</code>值的不同处理方法。此变量自MySQL 5.6.6 版本引入，分为全局级别和会话级别，可动态更新，默认值为OFF。本文主要介绍该参数打开和关闭情况下对timestamp的影响 。</p>
+    </div>
+    <div class="read-more">
+      <a href="/post/explicit_defaults_for_timestamp%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/" class="read-more-link">阅读更多</a>
+    </div>
+  </div>
+</article>
+
+    <article class="post">
+  <header class="post-header">
+    <h1 class="post-title"><a class="post-link" href="/post/mysql5.7%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E7%9A%84%E5%8F%82%E6%95%B0/">MySQL5</a></h1>
+    <div class="post-meta">
+      <span class="post-time"> 2019-12-17 </span>
+      <div class="post-category">
+          <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+          </div>
+        <span class="more-meta"> 约 1825 字 </span>
+        <span class="more-meta"> 预计阅读 4 分钟 </span>
+    </div>
+  </header>
+  
+  <div class="post-content">
+    <div class="post-summary">
+      <p><strong>简介：</strong></p>
+
+<p>本篇文章主要介绍 MySQL 初始化应当注意的参数，对于不同环境间实例迁移，这些参数同样应当注意。</p>
+
+<p><em>注：</em> 本文介绍的参数都是在配置文件 [mysqld] 部分。</p>
+    </div>
+    <div class="read-more">
+      <a href="/post/mysql5.7%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E7%9A%84%E5%8F%82%E6%95%B0/" class="read-more-link">阅读更多</a>
+    </div>
+  </div>
+</article>
+
     <article class="post">
   <header class="post-header">
     <h1 class="post-title"><a class="post-link" href="/post/%E5%85%B3%E4%BA%8E%E8%87%AA%E5%A2%9Eid%E4%BD%A0%E5%8F%AF%E8%83%BD%E8%BF%98%E4%B8%8D%E7%9F%A5%E9%81%93/">关于自增id你可能还不知道</a></h1>
@@ -332,56 +383,6 @@
     </div>
     <div class="read-more">
       <a href="/post/mysql%E5%AE%A1%E8%AE%A1%E6%93%8D%E4%BD%9C%E8%AE%B0%E5%BD%95/" class="read-more-link">阅读更多</a>
-    </div>
-  </div>
-</article>
-
-    <article class="post">
-  <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E5%A6%82%E4%BD%95%E7%94%A8shell%E8%84%9A%E6%9C%AC%E9%97%AA%E5%9B%9Ebinlog%E5%91%A2/">如何用shell脚本闪回binlog呢</a></h1>
-    <div class="post-meta">
-      <span class="post-time"> 2019-11-05 </span>
-      <div class="post-category">
-          <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
-          </div>
-        <span class="more-meta"> 约 1192 字 </span>
-        <span class="more-meta"> 预计阅读 3 分钟 </span>
-    </div>
-  </header>
-  
-  <div class="post-content">
-    <div class="post-summary">
-      <p><strong>简介：</strong></p>
-
-<p>上篇文章笔者介绍了如何用开源工具来闪回binlog，但有时候我们的机器无法安装这些开源工具。这时候我们可以使用shell脚本来闪回binlog，是不是觉得方便多了。</p>
-    </div>
-    <div class="read-more">
-      <a href="/post/%E5%A6%82%E4%BD%95%E7%94%A8shell%E8%84%9A%E6%9C%AC%E9%97%AA%E5%9B%9Ebinlog%E5%91%A2/" class="read-more-link">阅读更多</a>
-    </div>
-  </div>
-</article>
-
-    <article class="post">
-  <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/myflash%E5%9B%9E%E6%BB%9Abinlog/">MyFlash回滚binlog</a></h1>
-    <div class="post-meta">
-      <span class="post-time"> 2019-11-05 </span>
-      <div class="post-category">
-          <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
-          </div>
-        <span class="more-meta"> 约 821 字 </span>
-        <span class="more-meta"> 预计阅读 2 分钟 </span>
-    </div>
-  </header>
-  
-  <div class="post-content">
-    <div class="post-summary">
-      <p><strong>简介：</strong></p>
-
-<p>MyFlash是由美团点评公司技术工程部开发维护的一个回滚DML操作的工具。该工具通过解析v4版本的binlog，完成回滚操作。相对已有的回滚工具，其增加了更多的过滤选项，让回滚更加容易。</p>
-    </div>
-    <div class="read-more">
-      <a href="/post/myflash%E5%9B%9E%E6%BB%9Abinlog/" class="read-more-link">阅读更多</a>
     </div>
   </div>
 </article>

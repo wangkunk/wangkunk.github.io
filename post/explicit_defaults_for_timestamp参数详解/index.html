@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Explicit_defaults_for_timestamp参数详解 - MySQL Technology Blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="Simon" /><meta name="description" content="简介： explicit_defaults_for_timestamp 系统变量决定MySQL服务端对timestamp列中的默认值和NULL值的不同处理方法。此变量自MySQL 5.6.6 版本引入，分为全局级别和会话级别，可动态更新，默认值为OFF。本文主要介绍该参数打开和关闭情况下对timestamp的影响 。
+" /><meta name="keywords" content="MySQL, hugo, even" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.58.3 with theme even" />
+
+
+<link rel="canonical" href="https://wangkunk.github.io/post/explicit_defaults_for_timestamp%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<link href="/dist/even.c2a46f00.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css" integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin="anonymous">
+
+
+<meta property="og:title" content="Explicit_defaults_for_timestamp参数详解" />
+<meta property="og:description" content="简介：
+explicit_defaults_for_timestamp 系统变量决定MySQL服务端对timestamp列中的默认值和NULL值的不同处理方法。此变量自MySQL 5.6.6 版本引入，分为全局级别和会话级别，可动态更新，默认值为OFF。本文主要介绍该参数打开和关闭情况下对timestamp的影响 。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://wangkunk.github.io/post/explicit_defaults_for_timestamp%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3/" />
+<meta property="article:published_time" content="2019-12-17T17:14:43+08:00" />
+<meta property="article:modified_time" content="2019-12-17T17:14:43+08:00" />
+<meta itemprop="name" content="Explicit_defaults_for_timestamp参数详解">
+<meta itemprop="description" content="简介：
+explicit_defaults_for_timestamp 系统变量决定MySQL服务端对timestamp列中的默认值和NULL值的不同处理方法。此变量自MySQL 5.6.6 版本引入，分为全局级别和会话级别，可动态更新，默认值为OFF。本文主要介绍该参数打开和关闭情况下对timestamp的影响 。">
+
+
+<meta itemprop="datePublished" content="2019-12-17T17:14:43&#43;08:00" />
+<meta itemprop="dateModified" content="2019-12-17T17:14:43&#43;08:00" />
+<meta itemprop="wordCount" content="2396">
+
+
+
+<meta itemprop="keywords" content="MySQL," />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Explicit_defaults_for_timestamp参数详解"/>
+<meta name="twitter:description" content="简介：
+explicit_defaults_for_timestamp 系统变量决定MySQL服务端对timestamp列中的默认值和NULL值的不同处理方法。此变量自MySQL 5.6.6 版本引入，分为全局级别和会话级别，可动态更新，默认值为OFF。本文主要介绍该参数打开和关闭情况下对timestamp的影响 。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">MySQL技术</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">主页</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">归档</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">标签</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">分类</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">关于</li>
+      </a>
+  </ul>
+</nav>
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">MySQL技术</a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">主页</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">归档</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">标签</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">分类</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">关于</a>
+      </li>
+  </ul>
+</nav>
+    </header>
+
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Explicit_defaults_for_timestamp参数详解</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2019-12-17 </span>
+        <div class="post-category">
+            <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
+            </div>
+          <span class="more-meta"> 约 2396 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content always-active">
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-explicit-defaults-for-timestamp-off">1.explicit_defaults_for_timestamp = OFF</a></li>
+<li><a href="#2-explicit-defaults-for-timestamp-on">2.explicit_defaults_for_timestamp = ON</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </div>
+</div>
+    <div class="post-content">
+      <p><strong>简介：</strong>
+<code>explicit_defaults_for_timestamp</code> 系统变量决定MySQL服务端对timestamp列中的默认值和<code>NULL</code>值的不同处理方法。此变量自MySQL 5.6.6 版本引入，分为全局级别和会话级别，可动态更新，默认值为OFF。本文主要介绍该参数打开和关闭情况下对timestamp的影响 。</p>
+
+<h4 id="1-explicit-defaults-for-timestamp-off">1.explicit_defaults_for_timestamp = OFF</h4>
+
+<p>当该参数默认设置为OFF时，其行为如下：</p>
+
+<ul>
+<li>在默认情况下，如果timestamp列没有显式的指明null属性，那么该列会被自动加上not null属性(而其他类型的列如果没有被显式的指定not null，那么是允许null值的)，如果往这个列中插入null值，会自动的设置该列的值为current timestamp值。</li>
+<li>表中的第一个timestamp列，如果没有指定null属性或者没有指定默认值，也没有指定ON UPDATE语句。那么该列会自动被加上DEFAULT CURRENT_TIMESTAMP和ON UPDATE CURRENT_TIMESTAMP属性。</li>
+<li>对于其它TIMESTAMP列，如果没有显示指定NULL和DEFAULT属性的话，会自动设置为NOT NULL DEFAULT &lsquo;0000-00-00 00:00:00&rsquo;。(当然，这个与SQL_MODE有关，如果SQL_MODE中包含&rsquo;NO_ZERO_DATE&rsquo;，实际上是不允许将其默认值设置为&rsquo;0000-00-00 00:00:00&rsquo;的。)</li>
+</ul>
+
+<p>下面我们来测试下：(本文操作基于MySQL5.7.23 版本 SQL_MODE不包含&rsquo;NO_ZERO_DATE&rsquo;)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">show</span> <span class="n">variables</span> <span class="k">like</span> <span class="s1">&#39;explicit_defaults_for_timestamp&#39;</span><span class="p">;</span>
+<span class="o">+---------------------------------+-------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span>                   <span class="o">|</span> <span class="n">Value</span> <span class="o">|</span>
+<span class="o">+---------------------------------+-------+</span>
+<span class="o">|</span> <span class="n">explicit_defaults_for_timestamp</span> <span class="o">|</span> <span class="n">OFF</span>   <span class="o">|</span>
+<span class="o">+---------------------------------+-------+</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">create</span> <span class="k">table</span> <span class="n">t1</span> 
+    <span class="o">-&gt;</span> <span class="p">(</span>
+    <span class="o">-&gt;</span> <span class="n">ts1</span> <span class="kt">timestamp</span><span class="p">,</span>
+    <span class="o">-&gt;</span> <span class="n">ts2</span> <span class="kt">timestamp</span><span class="p">,</span>
+    <span class="o">-&gt;</span> <span class="n">ts3</span> <span class="kt">timestamp</span> <span class="k">default</span> <span class="s1">&#39;2010-01-01 00:00:00&#39;</span>
+    <span class="o">-&gt;</span> <span class="p">);</span>
+<span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">0</span> <span class="n">rows</span> <span class="nf">affected</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">03</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">show</span> <span class="k">create</span> <span class="k">table</span> <span class="n">t1</span><span class="err">\</span><span class="n">G</span>
+<span class="o">***************************</span> <span class="mi">1</span><span class="p">.</span> <span class="n">row</span> <span class="o">***************************</span>
+       <span class="k">Table</span><span class="p">:</span> <span class="n">t1</span>
+<span class="k">Create</span> <span class="k">Table</span><span class="p">:</span> <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">t1</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">ts1</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">ts2</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="s1">&#39;0000-00-00 00:00:00&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">ts3</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="s1">&#39;2010-01-01 00:00:00&#39;</span>
+<span class="p">)</span> <span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="k">in</span> <span class="kt">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">insert</span> <span class="k">into</span> <span class="n">t1</span> <span class="k">values</span> <span class="p">(</span><span class="no">null</span><span class="p">,</span><span class="no">null</span><span class="p">,</span><span class="no">null</span><span class="p">);</span>
+<span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">1</span> <span class="n">row</span> <span class="nf">affected</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">t1</span><span class="p">;</span>
+<span class="o">+---------------------+---------------------+---------------------+</span>
+<span class="o">|</span> <span class="n">ts1</span>                 <span class="o">|</span> <span class="n">ts2</span>                 <span class="o">|</span> <span class="n">ts3</span>                 <span class="o">|</span>
+<span class="o">+---------------------+---------------------+---------------------+</span>
+<span class="o">|</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">09</span> <span class="mi">15</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">56</span> <span class="o">|</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">09</span> <span class="mi">15</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">56</span> <span class="o">|</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">09</span> <span class="mi">15</span><span class="p">:</span><span class="mi">54</span><span class="p">:</span><span class="mi">56</span> <span class="o">|</span>
+<span class="o">+---------------------+---------------------+---------------------+</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="k">in</span> <span class="kt">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>从表结构来看，MySQL自动为第一个timestamp字段自动设置<strong>NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</strong>属性，而后面的timestamp字段，若没有指定，则设置了 <strong>NOT NULL DEFAULT &lsquo;0000-00-00 00:00:00&rsquo;</strong>属性。如果向timestamp这个列中插入null值，系统会自动的设置该列的值为current timestamp值。即explicit_defaults_for_timestamp=OFF时，即使timestamp列设为NOT NULL也能插入NULL值，系统会自动将NULL值设为current timestamp。</p>
+
+<h4 id="2-explicit-defaults-for-timestamp-on">2.explicit_defaults_for_timestamp = ON</h4>
+
+<p>当该参数设置为ON时，其行为如下：</p>
+
+<ul>
+<li>如果timestamp列没有显式的指定not null属性，那么默认的该列可以为null，此时向该列中插入null值时，会直接记录null，而不是current timestamp。</li>
+<li>不会自动的为表中的第一个timestamp列加上DEFAULT CURRENT_TIMESTAMP 和ON UPDATE CURRENT_TIMESTAMP属性。</li>
+<li>如果timestamp列被加上了not null属性，并且没有指定默认值。这时如果向表中插入记录，但是没有给该TIMESTAMP列指定值的时候，如果strict sql_mode被指定了，那么会直接报错。如果strict sql_mode没有被指定，那么会向该列中插入&rsquo;0000-00-00 00:00:00&rsquo;并且产生一个warning。</li>
+</ul>
+
+<p>同样的，我们来测试下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">show</span> <span class="n">variables</span> <span class="k">like</span> <span class="s1">&#39;explicit_defaults_for_timestamp&#39;</span><span class="p">;</span>
+<span class="o">+---------------------------------+-------+</span>
+<span class="o">|</span> <span class="n">Variable_name</span>                   <span class="o">|</span> <span class="n">Value</span> <span class="o">|</span>
+<span class="o">+---------------------------------+-------+</span>
+<span class="o">|</span> <span class="n">explicit_defaults_for_timestamp</span> <span class="o">|</span> <span class="k">ON</span>    <span class="o">|</span>
+<span class="o">+---------------------------------+-------+</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">create</span> <span class="k">table</span> <span class="n">t2</span> 
+    <span class="o">-&gt;</span> <span class="p">(</span>
+    <span class="o">-&gt;</span> <span class="n">ts1</span> <span class="kt">timestamp</span><span class="p">,</span>
+    <span class="o">-&gt;</span> <span class="n">ts2</span> <span class="kt">timestamp</span><span class="p">,</span>
+    <span class="o">-&gt;</span> <span class="n">ts3</span> <span class="kt">timestamp</span> <span class="k">default</span> <span class="s1">&#39;2010-01-01 00:00:00&#39;</span>
+    <span class="o">-&gt;</span> <span class="p">);</span>
+<span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">0</span> <span class="n">rows</span> <span class="nf">affected</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">02</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">show</span> <span class="k">create</span> <span class="k">table</span> <span class="n">t2</span><span class="err">\</span><span class="n">G</span>
+<span class="o">***************************</span> <span class="mi">1</span><span class="p">.</span> <span class="n">row</span> <span class="o">***************************</span>
+       <span class="k">Table</span><span class="p">:</span> <span class="n">t2</span>
+<span class="k">Create</span> <span class="k">Table</span><span class="p">:</span> <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">t2</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">ts1</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="no">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">ts2</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="no">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">ts3</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="s1">&#39;2010-01-01 00:00:00&#39;</span>
+<span class="p">)</span> <span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="k">in</span> <span class="kt">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">insert</span> <span class="k">into</span> <span class="n">t2</span> <span class="k">values</span> <span class="p">(</span><span class="no">null</span><span class="p">,</span><span class="no">null</span><span class="p">,</span><span class="no">null</span><span class="p">);</span>
+<span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">1</span> <span class="n">row</span> <span class="nf">affected</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">t2</span><span class="p">;</span>
+<span class="o">+------+------+------+</span>
+<span class="o">|</span> <span class="n">ts1</span>  <span class="o">|</span> <span class="n">ts2</span>  <span class="o">|</span> <span class="n">ts3</span>  <span class="o">|</span>
+<span class="o">+------+------+------+</span>
+<span class="o">|</span> <span class="no">NULL</span> <span class="o">|</span> <span class="no">NULL</span> <span class="o">|</span> <span class="no">NULL</span> <span class="o">|</span>
+<span class="o">+------+------+------+</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="k">in</span> <span class="kt">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="c1">-- 指定NOT NULL
+</span><span class="c1"></span><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">create</span> <span class="k">table</span> <span class="n">t3</span> 
+    <span class="o">-&gt;</span> <span class="p">(</span>
+    <span class="o">-&gt;</span> <span class="n">ts1</span> <span class="kt">timestamp</span><span class="p">,</span>
+    <span class="o">-&gt;</span> <span class="n">ts2</span> <span class="kt">timestamp</span><span class="p">,</span>
+    <span class="o">-&gt;</span> <span class="n">ts3</span> <span class="kt">timestamp</span> <span class="k">not</span> <span class="no">null</span>
+    <span class="o">-&gt;</span> <span class="p">);</span>
+<span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">0</span> <span class="n">rows</span> <span class="nf">affected</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">show</span> <span class="k">create</span> <span class="k">table</span> <span class="n">t3</span><span class="err">\</span><span class="n">G</span>
+<span class="o">***************************</span> <span class="mi">1</span><span class="p">.</span> <span class="n">row</span> <span class="o">***************************</span>
+       <span class="k">Table</span><span class="p">:</span> <span class="n">t3</span>
+<span class="k">Create</span> <span class="k">Table</span><span class="p">:</span> <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">t3</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">ts1</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="no">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">ts2</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="no">NULL</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">ts3</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="k">NOT</span> <span class="no">NULL</span>
+<span class="p">)</span> <span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8</span>
+<span class="mi">1</span> <span class="n">row</span> <span class="k">in</span> <span class="kt">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">insert</span> <span class="k">into</span> <span class="n">t3</span> <span class="k">values</span> <span class="p">(</span><span class="no">null</span><span class="p">,</span><span class="no">null</span><span class="p">,</span><span class="no">null</span><span class="p">);</span>
+<span class="n">ERROR</span> <span class="mi">1048</span> <span class="p">(</span><span class="mi">23000</span><span class="p">):</span> <span class="k">Column</span> <span class="s1">&#39;ts3&#39;</span> <span class="n">cannot</span> <span class="n">be</span> <span class="no">null</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">insert</span> <span class="k">into</span> <span class="nf">t3</span> <span class="p">(</span><span class="n">ts1</span><span class="p">,</span><span class="n">ts2</span><span class="p">)</span> <span class="k">values</span> <span class="p">(</span><span class="no">null</span><span class="p">,</span><span class="no">null</span><span class="p">);</span>
+<span class="n">Query</span> <span class="n">OK</span><span class="p">,</span> <span class="mi">1</span> <span class="n">row</span> <span class="n">affected</span><span class="p">,</span> <span class="mi">1</span> <span class="nf">warning</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span> <span class="n">sec</span><span class="p">)</span>
+
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">show</span> <span class="n">warnings</span><span class="p">;</span>
+<span class="o">+---------+------+------------------------------------------+</span>
+<span class="o">|</span> <span class="n">Level</span>   <span class="o">|</span> <span class="n">Code</span> <span class="o">|</span> <span class="n">Message</span>                                  <span class="o">|</span>
+<span class="o">+---------+------+------------------------------------------+</span>
+<span class="o">|</span> <span class="n">Warning</span> <span class="o">|</span> <span class="mi">1364</span> <span class="o">|</span> <span class="n">Field</span> <span class="s1">&#39;ts3&#39;</span> <span class="n">doesn</span><span class="s1">&#39;t have a default value |
+</span><span class="s1">+---------+------+------------------------------------------+
+</span><span class="s1">
+</span><span class="s1">mysql&gt; select * from t3;
+</span><span class="s1">+------+------+---------------------+
+</span><span class="s1">| ts1  | ts2  | ts3                 |
+</span><span class="s1">+------+------+---------------------+
+</span><span class="s1">| NULL | NULL | 0000-00-00 00:00:00 |
+</span><span class="s1">+------+------+---------------------+</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>从表结构上看出，在参数开启的情况下MySQL默认会为timestamp列添加 <strong>null default null</strong>属性，而且MySQL也没有为第一个timestamp字段设置该列为current timestamp值。timestamp 字段写入null值，写入之后存储的就是null值，而不是当前的时间。当timestamp 字段指定NOT NULL时，若显式插入NULL则报错提示:该字段不能为空；若不显式插入该字段且SQL_MODE不包含&rsquo;NO_ZERO_DATE&rsquo;，则会向该列中插入&rsquo;0000-00-00 00:00:00&rsquo;并且产生一个warning。</p>
+
+<p><strong>总结：</strong></p>
+
+<p>实际情况下，我们经常会这样创建表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">table_name</span><span class="o">`</span> <span class="p">(</span>
+  <span class="o">`</span><span class="n">increment_id</span><span class="o">`</span> <span class="kt">INT</span> <span class="k">UNSIGNED</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="kp">auto_increment</span> <span class="n">COMMENT</span> <span class="s1">&#39;自增主键&#39;</span><span class="p">,</span>
+  <span class="p">...</span>
+  <span class="o">`</span><span class="n">create_time</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="n">COMMENT</span> <span class="s1">&#39;创建时间&#39;</span><span class="p">,</span>
+  <span class="o">`</span><span class="n">update_time</span><span class="o">`</span> <span class="kt">timestamp</span> <span class="k">NOT</span> <span class="no">NULL</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="n">COMMENT</span> <span class="s1">&#39;修改时间&#39;</span><span class="p">,</span>
+  <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">increment_id</span><span class="o">`</span><span class="p">)</span>
+<span class="p">)</span> <span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span>  <span class="k">DEFAULT</span> <span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>此时timestamp字段会指定NOT NULL，这时建议<code>explicit_defaults_for_timestamp</code> 参数采用默认的OFF，这样当timestamp字段显式插入NULL值时不报错，特别是程序sql写的不规范时，可以避免程序插入报错。</p>
+
+<p>在不同环境间，此参数建议统一 ，不然可能出现程序在这个环境运行正常 在另外一个环境却出现报错的情况。笔者了解到亚马逊RDS MySQL5.7实例该参数默认为ON，在环境迁移时要特别注意下该参数。</p>
+
+<p><em>参考：</em> <a href="http://suo.im/5bDU2o">http://suo.im/5bDU2o</a>  <a href="http://suo.im/4AJeM9">http://suo.im/4AJeM9</a></p>
+
+<p><img src="https://upload-images.jianshu.io/upload_images/11096896-4a55fd822a8a1436.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="WX.png" /></p>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">Simon</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2019-12-17
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql/">MySQL</a>
+          </div>
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/mysql5.7%E5%BA%94%E5%BD%93%E6%B3%A8%E6%84%8F%E7%9A%84%E5%8F%82%E6%95%B0/">
+            <span class="next-text nav-default">MySQL5</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        
+
+  
+  <div id="vcomments"></div>
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script type="text/javascript">
+    new Valine({
+        el: '#vcomments' ,
+        appId: '2FYPsiQzkbpY4KgD0fet6BK5-gzGzoHsz',
+        appKey: 'cKuSQfbvRod8NNOLovpubxJo',
+        notify:  false ,
+        verify:  false ,
+        avatar:'mm',
+        placeholder: '说点什么吧...',
+        visitor:  false 
+    });
+  </script>
+
+  
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="https://github.com/wangkunk" class="iconfont icon-github" title="github"></a>
+      <a href="https://www.zhihu.com/people/kunjian-1/activities" class="iconfont icon-zhihu" title="zhihu"></a>
+  <a href="https://wangkunk.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2017 - 
+    2019
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Simon</span>
+  </span>
+</div>
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js" integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js" integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/dist/even.26188efa.min.js"></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
