@@ -16,7 +16,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-<meta name="author" content="Simon" /><meta name="description" content="" /><meta name="keywords" content="MySQL, hugo, even" />
+<meta name="author" content="Simon" /><meta name="description" content="前言：
+最近遇到实例迁移的问题，数据迁完后还需要将数据库用户及权限迁移过去。进行逻辑备份时，我一般习惯将MySQL系统库排除掉，这样备份里面就不包含数据库用户相关信息了。这时候如果想迁移用户相关信息 可以采用以下三种方案，类似的 我们也可以采用以下三种方案来备份数据库账号相关信息。（本文方案针对MySQL5.7版本，其他版本稍有不同）
+" /><meta name="keywords" content="MySQL, hugo, even" />
 
 
 
@@ -39,25 +41,31 @@
 
 
 <meta property="og:title" content="如何优雅的备份账号相关信息" />
-<meta property="og:description" content="" />
+<meta property="og:description" content="前言：
+
+最近遇到实例迁移的问题，数据迁完后还需要将数据库用户及权限迁移过去。进行逻辑备份时，我一般习惯将MySQL系统库排除掉，这样备份里面就不包含数据库用户相关信息了。这时候如果想迁移用户相关信息 可以采用以下三种方案，类似的 我们也可以采用以下三种方案来备份数据库账号相关信息。（本文方案针对MySQL5.7版本，其他版本稍有不同）" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://wangkunk.github.io/post/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%A4%87%E4%BB%BD%E8%B4%A6%E5%8F%B7%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF/" />
 <meta property="article:published_time" content="2020-01-13T17:23:19+08:00" />
 <meta property="article:modified_time" content="2020-01-13T17:23:19+08:00" />
 <meta itemprop="name" content="如何优雅的备份账号相关信息">
-<meta itemprop="description" content="">
+<meta itemprop="description" content="前言：
+
+最近遇到实例迁移的问题，数据迁完后还需要将数据库用户及权限迁移过去。进行逻辑备份时，我一般习惯将MySQL系统库排除掉，这样备份里面就不包含数据库用户相关信息了。这时候如果想迁移用户相关信息 可以采用以下三种方案，类似的 我们也可以采用以下三种方案来备份数据库账号相关信息。（本文方案针对MySQL5.7版本，其他版本稍有不同）">
 
 
 <meta itemprop="datePublished" content="2020-01-13T17:23:19&#43;08:00" />
 <meta itemprop="dateModified" content="2020-01-13T17:23:19&#43;08:00" />
-<meta itemprop="wordCount" content="0">
+<meta itemprop="wordCount" content="1753">
 
 
 
 <meta itemprop="keywords" content="MySQL," />
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="如何优雅的备份账号相关信息"/>
-<meta name="twitter:description" content=""/>
+<meta name="twitter:description" content="前言：
+
+最近遇到实例迁移的问题，数据迁完后还需要将数据库用户及权限迁移过去。进行逻辑备份时，我一般习惯将MySQL系统库排除掉，这样备份里面就不包含数据库用户相关信息了。这时候如果想迁移用户相关信息 可以采用以下三种方案，类似的 我们也可以采用以下三种方案来备份数据库账号相关信息。（本文方案针对MySQL5.7版本，其他版本稍有不同）"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -131,8 +139,8 @@
         <div class="post-category">
             <a href="/categories/mysql%E6%8A%80%E6%9C%AF/"> MySQL技术 </a>
             </div>
-          <span class="more-meta"> 约 0 字 </span>
-          <span class="more-meta"> 预计阅读 0 分钟 </span>
+          <span class="more-meta"> 约 1753 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
         <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
       </div>
     </header>
@@ -140,11 +148,430 @@
     <div class="post-toc" id="post-toc">
   <h2 class="post-toc-title">文章目录</h2>
   <div class="post-toc-content always-active">
-    
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-mysqldump逻辑导出用户相关信息">1.mysqldump逻辑导出用户相关信息</a></li>
+<li><a href="#2-自定义脚本导出">2.自定义脚本导出</a></li>
+<li><a href="#3-mysqlpump直接导出用户">3.mysqlpump直接导出用户</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
   </div>
 </div>
     <div class="post-content">
-      <p><img src="https://upload-images.jianshu.io/upload_images/11096896-4a55fd822a8a1436.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="WX.png" /></p>
+      <p><strong>前言：</strong></p>
+
+<p>最近遇到实例迁移的问题，数据迁完后还需要将数据库用户及权限迁移过去。进行逻辑备份时，我一般习惯将MySQL系统库排除掉，这样备份里面就不包含数据库用户相关信息了。这时候如果想迁移用户相关信息 可以采用以下三种方案，类似的 我们也可以采用以下三种方案来备份数据库账号相关信息。（本文方案针对MySQL5.7版本，其他版本稍有不同）</p>
+
+<h4 id="1-mysqldump逻辑导出用户相关信息">1.mysqldump逻辑导出用户相关信息</h4>
+
+<p>我们知道，数据库用户密码及权限相关信息保存在系统库<code>mysql</code> 里面。采用mysqldump可以将相关表数据导出来 如果有迁移用户的需求 我们可以按照需求在另外的实例中插入这些数据。下面我们来演示下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1">#只导出mysql库中的user，db，tables_priv表数据</span> 
+<span class="c1">#如果你有针队column的赋权 可以再导出columns_priv表数据</span>
+<span class="c1">#若数据库开启了GTID 导出时最好加上 --set-gtid-purged=OFF</span>
+mysqldump -uroot -proot mysql user db tables_priv -t --skip-extended-insert &gt; /tmp/user_info.sql
+
+<span class="c1">#导出的具体信息</span>
+--
+-- Dumping data <span class="k">for</span> table <span class="sb">`</span>user<span class="sb">`</span>
+--
+
+LOCK TABLES <span class="sb">`</span>user<span class="sb">`</span> WRITE<span class="p">;</span>
+/*!40000 ALTER TABLE <span class="sb">`</span>user<span class="sb">`</span> DISABLE KEYS */<span class="p">;</span>
+INSERT INTO <span class="sb">`</span>user<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;%&#39;</span>,<span class="s1">&#39;root&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,0,0,0,0,<span class="s1">&#39;mysql_native_password&#39;</span>,<span class="s1">&#39;*
+</span><span class="s1">81F5E21E35407D884A6CD4A731AEBFB6AF209E1B&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;2019-03-06 03:03:15&#39;</span>,NULL,<span class="s1">&#39;N&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>user<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;localhost&#39;</span>,<span class="s1">&#39;mysql.session&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,0,0,0,0,<span class="s1">&#39;mysql_na
+</span><span class="s1">tive_password&#39;</span>,<span class="s1">&#39;*THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;2019-03-06 02:57:40&#39;</span>,NULL,<span class="s1">&#39;Y&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>user<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;localhost&#39;</span>,<span class="s1">&#39;mysql.sys&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,0,0,0,0,<span class="s1">&#39;mysql_native
+</span><span class="s1">_password&#39;</span>,<span class="s1">&#39;*THISISNOTAVALIDPASSWORDTHATCANBEUSEDHERE&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;2019-03-06 02:57:40&#39;</span>,NULL,<span class="s1">&#39;Y&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>user<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;%&#39;</span>,<span class="s1">&#39;test&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,0,0,0,0,<span class="s1">&#39;mysql_native_password&#39;</span>,<span class="s1">&#39;*
+</span><span class="s1">94BDCEBE19083CE2A1F959FD02F964C7AF4CFC29&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;2019-04-19 06:24:54&#39;</span>,NULL,<span class="s1">&#39;N&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>user<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;%&#39;</span>,<span class="s1">&#39;read&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,0,0,0,0,<span class="s1">&#39;mysql_native_password&#39;</span>,<span class="s1">&#39;*
+</span><span class="s1">2158DEFBE7B6FC24585930DF63794A2A44F22736&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;2019-04-19 06:27:45&#39;</span>,NULL,<span class="s1">&#39;N&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>user<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;%&#39;</span>,<span class="s1">&#39;test_user&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,_binary <span class="s1">&#39;&#39;</span>,0,0,0,0,<span class="s1">&#39;mysql_native_passwor
+</span><span class="s1">d&#39;</span>,<span class="s1">&#39;*8A447777509932F0ED07ADB033562027D95A0F17&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;2019-04-19 06:29:38&#39;</span>,NULL,<span class="s1">&#39;N&#39;</span><span class="o">)</span><span class="p">;</span>
+/*!40000 ALTER TABLE <span class="sb">`</span>user<span class="sb">`</span> ENABLE KEYS */<span class="p">;</span>
+UNLOCK TABLES<span class="p">;</span>
+
+--
+-- Dumping data <span class="k">for</span> table <span class="sb">`</span>db<span class="sb">`</span>
+--
+
+LOCK TABLES <span class="sb">`</span>db<span class="sb">`</span> WRITE<span class="p">;</span>
+/*!40000 ALTER TABLE <span class="sb">`</span>db<span class="sb">`</span> DISABLE KEYS */<span class="p">;</span>
+INSERT INTO <span class="sb">`</span>db<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;localhost&#39;</span>,<span class="s1">&#39;performance_schema&#39;</span>,<span class="s1">&#39;mysql.session&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>db<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;localhost&#39;</span>,<span class="s1">&#39;sys&#39;</span>,<span class="s1">&#39;mysql.sys&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;Y&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>db<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;%&#39;</span>,<span class="s1">&#39;test_db&#39;</span>,<span class="s1">&#39;test&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;Y&#39;</span>,<span class="s1">&#39;N&#39;</span>,<span class="s1">&#39;N&#39;</span><span class="o">)</span><span class="p">;</span>
+/*!40000 ALTER TABLE <span class="sb">`</span>db<span class="sb">`</span> ENABLE KEYS */<span class="p">;</span>
+UNLOCK TABLES<span class="p">;</span>
+
+--
+-- Dumping data <span class="k">for</span> table <span class="sb">`</span>tables_priv<span class="sb">`</span>
+--
+
+LOCK TABLES <span class="sb">`</span>tables_priv<span class="sb">`</span> WRITE<span class="p">;</span>
+/*!40000 ALTER TABLE <span class="sb">`</span>tables_priv<span class="sb">`</span> DISABLE KEYS */<span class="p">;</span>
+INSERT INTO <span class="sb">`</span>tables_priv<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;localhost&#39;</span>,<span class="s1">&#39;mysql&#39;</span>,<span class="s1">&#39;mysql.session&#39;</span>,<span class="s1">&#39;user&#39;</span>,<span class="s1">&#39;boot@connecting host&#39;</span>,<span class="s1">&#39;0000-00-00 00:00:00&#39;</span>,<span class="s1">&#39;Select&#39;</span>,<span class="s1">&#39;&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>tables_priv<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;localhost&#39;</span>,<span class="s1">&#39;sys&#39;</span>,<span class="s1">&#39;mysql.sys&#39;</span>,<span class="s1">&#39;sys_config&#39;</span>,<span class="s1">&#39;root@localhost&#39;</span>,<span class="s1">&#39;2019-03-06 02:57:40&#39;</span>,<span class="s1">&#39;Select&#39;</span>,<span class="s1">&#39;&#39;</span><span class="o">)</span><span class="p">;</span>
+INSERT INTO <span class="sb">`</span>tables_priv<span class="sb">`</span> VALUES <span class="o">(</span><span class="s1">&#39;%&#39;</span>,<span class="s1">&#39;test_db&#39;</span>,<span class="s1">&#39;test_user&#39;</span>,<span class="s1">&#39;t1&#39;</span>,<span class="s1">&#39;root@localhost&#39;</span>,<span class="s1">&#39;0000-00-00 00:00:00&#39;</span>,<span class="s1">&#39;Select,Insert,Update,Delete&#39;</span>,<span class="s1">&#39;&#39;</span><span class="o">)</span><span class="p">;</span>
+/*!40000 ALTER TABLE <span class="sb">`</span>tables_priv<span class="sb">`</span> ENABLE KEYS */<span class="p">;</span>
+UNLOCK TABLES<span class="p">;</span>
+
+<span class="c1">#在新的实例插入所需数据 就可以创建出相同的用户及权限了</span> </code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="2-自定义脚本导出">2.自定义脚本导出</h4>
+
+<p>首先拼接出创建用户的语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-mysql" data-lang="mysql"><span class="k">SELECT</span>
+	<span class="nf">CONCAT</span><span class="p">(</span>
+		<span class="s1">&#39;create user \&#39;&#39;,
+</span><span class="s1">    user,
+</span><span class="s1">    &#39;</span><span class="err">\</span><span class="s1">&#39;@\&#39;&#39;,
+</span><span class="s1">    Host,
+</span><span class="s1">    &#39;</span><span class="err">\</span><span class="s1">&#39;&#39;</span>
+    <span class="s1">&#39; IDENTIFIED BY PASSWORD \&#39;&#39;,
+</span><span class="s1">    authentication_string,
+</span><span class="s1">		&#39;</span><span class="err">\</span><span class="s1">&#39;;&#39;</span>
+	<span class="p">)</span> <span class="k">AS</span> <span class="n">CreateUserQuery</span>
+<span class="k">FROM</span>
+	<span class="n">mysql</span><span class="p">.</span><span class="o">`</span><span class="n">user</span><span class="o">`</span>
+<span class="k">WHERE</span>
+	<span class="o">`</span><span class="n">User</span><span class="o">`</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span>
+		<span class="s1">&#39;mysql.session&#39;</span><span class="p">,</span>
+		<span class="s1">&#39;mysql.sys&#39;</span>
+	<span class="p">);</span>
+	
+<span class="c1">#结果 在新实例执行后可以创建出相同密码的用户
+</span><span class="c1"></span><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SELECT</span>
+    <span class="o">-&gt;</span> <span class="nf">CONCAT</span><span class="p">(</span>
+    <span class="o">-&gt;</span> <span class="s1">&#39;create user \&#39;&#39;,
+</span><span class="s1">    -&gt;     user,
+</span><span class="s1">    -&gt;     &#39;</span><span class="err">\</span><span class="s1">&#39;@\&#39;&#39;,
+</span><span class="s1">    -&gt;     Host,
+</span><span class="s1">    -&gt;     &#39;</span><span class="err">\</span><span class="s1">&#39;&#39;</span>
+    <span class="o">-&gt;</span>     <span class="s1">&#39; IDENTIFIED BY PASSWORD \&#39;&#39;,
+</span><span class="s1">    -&gt;     authentication_string,
+</span><span class="s1">    -&gt; &#39;</span><span class="err">\</span><span class="s1">&#39;;&#39;</span>
+    <span class="o">-&gt;</span> <span class="p">)</span> <span class="k">AS</span> <span class="n">CreateUserQuery</span>
+    <span class="o">-&gt;</span> <span class="k">FROM</span>
+    <span class="o">-&gt;</span> <span class="n">mysql</span><span class="p">.</span><span class="o">`</span><span class="n">user</span><span class="o">`</span>
+    <span class="o">-&gt;</span> <span class="k">WHERE</span>
+    <span class="o">-&gt;</span> <span class="o">`</span><span class="n">User</span><span class="o">`</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span>
+    <span class="o">-&gt;</span> <span class="s1">&#39;mysql.session&#39;</span><span class="p">,</span>
+    <span class="o">-&gt;</span> <span class="s1">&#39;mysql.sys&#39;</span>
+    <span class="o">-&gt;</span> <span class="p">);</span>
+<span class="o">+-------------------------------------------------------------------------------------------------+</span>
+<span class="o">|</span> <span class="n">CreateUserQuery</span>                                                                                 <span class="o">|</span>
+<span class="o">+-------------------------------------------------------------------------------------------------+</span>
+<span class="o">|</span> <span class="k">create</span> <span class="n">user</span> <span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="n">PASSWORD</span> <span class="s1">&#39;*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B&#39;</span><span class="p">;</span>      <span class="o">|</span>
+<span class="o">|</span> <span class="k">create</span> <span class="n">user</span> <span class="s1">&#39;test&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="n">PASSWORD</span> <span class="s1">&#39;*94BDCEBE19083CE2A1F959FD02F964C7AF4CFC29&#39;</span><span class="p">;</span>      <span class="o">|</span>
+<span class="o">|</span> <span class="k">create</span> <span class="n">user</span> <span class="s1">&#39;read&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="n">PASSWORD</span> <span class="s1">&#39;*2158DEFBE7B6FC24585930DF63794A2A44F22736&#39;</span><span class="p">;</span>      <span class="o">|</span>
+<span class="o">|</span> <span class="k">create</span> <span class="n">user</span> <span class="s1">&#39;test_user&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="n">PASSWORD</span> <span class="s1">&#39;*8A447777509932F0ED07ADB033562027D95A0F17&#39;</span><span class="p">;</span> <span class="o">|</span>
+<span class="o">+-------------------------------------------------------------------------------------------------+</span>
+<span class="mi">4</span> <span class="n">rows</span> <span class="k">in</span> <span class="kt">set</span> <span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span> <span class="n">sec</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>然后通过脚本导出用户权限：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1">#导出权限脚本</span>
+<span class="c1">#!/bin/bash</span>  
+<span class="c1">#Function export user privileges</span>  
+ 
+<span class="nv">pwd</span><span class="o">=</span>root  
+expgrants<span class="o">()</span>  
+<span class="o">{</span>  
+  mysql -B -u<span class="s1">&#39;root&#39;</span> -p<span class="si">${</span><span class="nv">pwd</span><span class="si">}</span> -N <span class="nv">$@</span> -e <span class="s2">&#34;SELECT CONCAT(  &#39;SHOW GRANTS FOR &#39;&#39;&#39;, user, &#39;&#39;&#39;@&#39;&#39;&#39;, host, &#39;&#39;&#39;;&#39; ) AS query FROM mysql.user&#34;</span> <span class="p">|</span> <span class="se">\
+</span><span class="se"></span>  mysql -u<span class="s1">&#39;root&#39;</span> -p<span class="si">${</span><span class="nv">pwd</span><span class="si">}</span> <span class="nv">$@</span> <span class="p">|</span> <span class="se">\
+</span><span class="se"></span>  sed <span class="s1">&#39;s/\(GRANT .*\)/\1;/;s/^\(Grants for .*\)/-- \1 /;/--/{x;p;x;}&#39;</span>  
+<span class="o">}</span>  
+ 
+expgrants &gt; /tmp/grants.sql
+<span class="nb">echo</span> <span class="s2">&#34;flush privileges;&#34;</span> &gt;&gt; /tmp/grants.sql
+
+<span class="c1">#执行脚本后结果</span>
+-- Grants <span class="k">for</span> read@% 
+GRANT SELECT ON *.* TO <span class="s1">&#39;read&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+
+-- Grants <span class="k">for</span> root@% 
+GRANT ALL PRIVILEGES ON *.* TO <span class="s1">&#39;root&#39;</span>@<span class="s1">&#39;%&#39;</span> WITH GRANT OPTION<span class="p">;</span>
+
+-- Grants <span class="k">for</span> test@% 
+GRANT USAGE ON *.* TO <span class="s1">&#39;test&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, EXECUTE, CREATE VIEW, SHOW VIEW ON <span class="sb">`</span>test_db<span class="sb">`</span>.* TO <span class="s1">&#39;test&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+
+-- Grants <span class="k">for</span> test_user@% 
+GRANT USAGE ON *.* TO <span class="s1">&#39;test_user&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+GRANT SELECT, INSERT, UPDATE, DELETE ON <span class="sb">`</span>test_db<span class="sb">`</span>.<span class="sb">`</span>t1<span class="sb">`</span> TO <span class="s1">&#39;test_user&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+
+-- Grants <span class="k">for</span> mysql.session@localhost 
+GRANT SUPER ON *.* TO <span class="s1">&#39;mysql.session&#39;</span>@<span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+GRANT SELECT ON <span class="sb">`</span>performance_schema<span class="sb">`</span>.* TO <span class="s1">&#39;mysql.session&#39;</span>@<span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+GRANT SELECT ON <span class="sb">`</span>mysql<span class="sb">`</span>.<span class="sb">`</span>user<span class="sb">`</span> TO <span class="s1">&#39;mysql.session&#39;</span>@<span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+
+-- Grants <span class="k">for</span> mysql.sys@localhost 
+GRANT USAGE ON *.* TO <span class="s1">&#39;mysql.sys&#39;</span>@<span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+GRANT TRIGGER ON <span class="sb">`</span>sys<span class="sb">`</span>.* TO <span class="s1">&#39;mysql.sys&#39;</span>@<span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+GRANT SELECT ON <span class="sb">`</span>sys<span class="sb">`</span>.<span class="sb">`</span>sys_config<span class="sb">`</span> TO <span class="s1">&#39;mysql.sys&#39;</span>@<span class="s1">&#39;localhost&#39;</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<h4 id="3-mysqlpump直接导出用户">3.mysqlpump直接导出用户</h4>
+
+<p>mysqlpump是mysqldump的一个衍生，也是MySQL逻辑备份的工具。mysqlpump可用的选项更多，可以直接导出创建用户的语句及赋权的语句。下面我们来演示下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1">#exclude-databases排除数据库 --users指定导出用户 exclude-users排除哪些用户</span> 
+<span class="c1">#还可以增加 --add-drop-user 参数 生成drop user语句</span>
+<span class="c1">#若数据库开启了GTID 导出时必须加上 --set-gtid-purged=OFF</span>
+mysqlpump -uroot -proot --exclude-databases<span class="o">=</span>% --users  --exclude-users<span class="o">=</span>mysql.session,mysql.sys &gt; /tmp/user.sql
+
+<span class="c1">#导出的结果</span>
+-- Dump created by MySQL pump utility, version: <span class="m">5</span>.7.23, linux-glibc2.12 <span class="o">(</span>x86_64<span class="o">)</span>
+-- Dump start time: Fri Apr <span class="m">19</span> <span class="m">15</span>:03:02 <span class="m">2019</span>
+-- Server version: <span class="m">5</span>.7.23
+
+SET @OLD_UNIQUE_CHECKS<span class="o">=</span>@@UNIQUE_CHECKS, <span class="nv">UNIQUE_CHECKS</span><span class="o">=</span><span class="m">0</span><span class="p">;</span>
+SET @OLD_FOREIGN_KEY_CHECKS<span class="o">=</span>@@FOREIGN_KEY_CHECKS, <span class="nv">FOREIGN_KEY_CHECKS</span><span class="o">=</span><span class="m">0</span><span class="p">;</span>
+SET @OLD_SQL_MODE<span class="o">=</span>@@SQL_MODE<span class="p">;</span>
+SET <span class="nv">SQL_MODE</span><span class="o">=</span><span class="s2">&#34;NO_AUTO_VALUE_ON_ZERO&#34;</span><span class="p">;</span>
+SET @@SESSION.SQL_LOG_BIN<span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+SET @OLD_TIME_ZONE<span class="o">=</span>@@TIME_ZONE<span class="p">;</span>
+SET <span class="nv">TIME_ZONE</span><span class="o">=</span><span class="s1">&#39;+00:00&#39;</span><span class="p">;</span>
+SET @OLD_CHARACTER_SET_CLIENT<span class="o">=</span>@@CHARACTER_SET_CLIENT<span class="p">;</span>
+SET @OLD_CHARACTER_SET_RESULTS<span class="o">=</span>@@CHARACTER_SET_RESULTS<span class="p">;</span>
+SET @OLD_COLLATION_CONNECTION<span class="o">=</span>@@COLLATION_CONNECTION<span class="p">;</span>
+SET NAMES utf8mb4<span class="p">;</span>
+CREATE USER <span class="s1">&#39;read&#39;</span>@<span class="s1">&#39;%&#39;</span> IDENTIFIED WITH <span class="s1">&#39;mysql_native_password&#39;</span> AS <span class="s1">&#39;*2158DEFBE7B6FC24585930DF63794A2A44F22736&#39;</span> REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK<span class="p">;</span>
+GRANT SELECT ON *.* TO <span class="s1">&#39;read&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+CREATE USER <span class="s1">&#39;root&#39;</span>@<span class="s1">&#39;%&#39;</span> IDENTIFIED WITH <span class="s1">&#39;mysql_native_password&#39;</span> AS <span class="s1">&#39;*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B&#39;</span> REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK<span class="p">;</span>
+GRANT ALL PRIVILEGES ON *.* TO <span class="s1">&#39;root&#39;</span>@<span class="s1">&#39;%&#39;</span> WITH GRANT OPTION<span class="p">;</span>
+CREATE USER <span class="s1">&#39;test&#39;</span>@<span class="s1">&#39;%&#39;</span> IDENTIFIED WITH <span class="s1">&#39;mysql_native_password&#39;</span> AS <span class="s1">&#39;*94BDCEBE19083CE2A1F959FD02F964C7AF4CFC29&#39;</span> REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK<span class="p">;</span>
+GRANT USAGE ON *.* TO <span class="s1">&#39;test&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, EXECUTE, CREATE VIEW, SHOW VIEW ON <span class="sb">`</span>test_db<span class="sb">`</span>.* TO <span class="s1">&#39;test&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+CREATE USER <span class="s1">&#39;test_user&#39;</span>@<span class="s1">&#39;%&#39;</span> IDENTIFIED WITH <span class="s1">&#39;mysql_native_password&#39;</span> AS <span class="s1">&#39;*8A447777509932F0ED07ADB033562027D95A0F17&#39;</span> REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK<span class="p">;</span>
+GRANT USAGE ON *.* TO <span class="s1">&#39;test_user&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+GRANT SELECT, INSERT, UPDATE, DELETE ON <span class="sb">`</span>test_db<span class="sb">`</span>.<span class="sb">`</span>t1<span class="sb">`</span> TO <span class="s1">&#39;test_user&#39;</span>@<span class="s1">&#39;%&#39;</span><span class="p">;</span>
+SET <span class="nv">TIME_ZONE</span><span class="o">=</span>@OLD_TIME_ZONE<span class="p">;</span>
+SET <span class="nv">CHARACTER_SET_CLIENT</span><span class="o">=</span>@OLD_CHARACTER_SET_CLIENT<span class="p">;</span>
+SET <span class="nv">CHARACTER_SET_RESULTS</span><span class="o">=</span>@OLD_CHARACTER_SET_RESULTS<span class="p">;</span>
+SET <span class="nv">COLLATION_CONNECTION</span><span class="o">=</span>@OLD_COLLATION_CONNECTION<span class="p">;</span>
+SET <span class="nv">FOREIGN_KEY_CHECKS</span><span class="o">=</span>@OLD_FOREIGN_KEY_CHECKS<span class="p">;</span>
+SET <span class="nv">UNIQUE_CHECKS</span><span class="o">=</span>@OLD_UNIQUE_CHECKS<span class="p">;</span>
+SET <span class="nv">SQL_MODE</span><span class="o">=</span>@OLD_SQL_MODE<span class="p">;</span>
+-- Dump end time: Fri Apr <span class="m">19</span> <span class="m">15</span>:03:02 <span class="m">2019</span>
+
+<span class="c1">#可以看出 导出结果只包含创建用户及赋权的语句 十分好用</span>
+<span class="c1">#mysqlpump详细用法可参考：</span>
+http://www.cnblogs.com/zhoujinyi/p/5684903.html
+https://dev.mysql.com/doc/refman/5.7/en/mysqlpump.html</code></pre></td></tr></table>
+</div>
+</div>
+<p><strong>总结：</strong></p>
+
+<p>本篇文章介绍了三种导出数据库用户信息的方案，每种方案都给出了脚本并进行演示。同时 这三种方案稍加以封装都可以作为备份数据库用户权限的脚本。可能你还有其他方案，如：pt-show-grants等，欢迎分享出来哦，也欢迎大家收藏或者改造成更适合自己的脚本，说不定什么时候就会用到哦 特别是一个实例有好多用户时，你会发现脚本更好用哈。</p>
     </div>
 
     <div class="post-copyright">
